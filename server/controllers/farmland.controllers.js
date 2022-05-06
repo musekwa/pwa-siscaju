@@ -66,7 +66,7 @@ const getAllFarmlands = async (req, res) => {
   let farmlands;
 
   try {
-    farmlands = await Farmland.find({}, "label geocoordinates");
+    farmlands = await Farmland.find({}, "label area geocoordinates farmDivisions");
     return res.status(200).json(farmlands);
   } catch (err) {
     return res.status(400).json({

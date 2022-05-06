@@ -10,7 +10,7 @@
     table,
     th,
     td {
-      border: 1px solid black;
+      border: 1px solid gray;
       border-collapse: collapse;
     }
     body {
@@ -25,7 +25,7 @@
     </h1>
     <div
       style="
-        width: 500px;
+        width: 800px;
         height: auto;
         background-color: lightgray;
         margin: auto;
@@ -55,7 +55,7 @@
         ou outro similar.
       </p>
     </div>
-    <div style="margin: auto; width: 500px; height: auto">
+    <div style="margin: auto; width: 800px; height: auto">
       <div>
         <p><strong>1. CRUD para utilizadores do SisCaju:</strong></p>
         <table style="width: 100%">
@@ -189,10 +189,14 @@
           </tr>
         </table>
       </div>
-           <br />
+      <br />
       <hr />
       <div>
-        <p><strong>3. CRUD para pomares do caju e suas respetivas subdivisões:</strong></p>
+        <p>
+          <strong
+            >3. CRUD para pomares do caju e suas respetivas subdivisões:</strong
+          >
+        </p>
         <table style="width: 100%">
           <tr>
             <th>Método</th>
@@ -233,8 +237,10 @@
                 >/farmlands/:farmerId</a
               >
             </td>
-            <td>Leitura dos pomares pertencendo ao 
-                produtor, usando o ID do produtor como parâmetro</td>
+            <td>
+              Leitura dos pomares pertencendo ao produtor, usando o ID do
+              produtor como parâmetro
+            </td>
           </tr>
           <tr>
             <td>POST</td>
@@ -247,21 +253,118 @@
               >
             </td>
             <td>
-              Registo do pomar pertencendo ao 
-                produtor, usando o ID do produtor como parâmetro
+              Registo do pomar pertencendo ao produtor, usando o ID do produtor
+              como parâmetro
+            </td>
+          </tr>
+          <tr>
+            <td>UPDATE</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/users/:userId"
+                target="_blank"
+                style="text-decoration: none"
+                >/farmlands/:/farmlandId/:farmerId</a
+              >
+            </td>
+            <td>
+              Atualização de um pomar específico de um produtor específico,
+              ambos identificados pelo ID do pomar e ID do produtor como
+              parâmetros respetivamente.
             </td>
           </tr>
           <tr>
             <td>DELETE</td>
             <td>
               <a
-                href="https://pwa-siscaju.herokuapp.com/users/:userId"
+                href="https://pwa-siscaju.herokuapp.com/farmlands/:userId"
                 target="_blank"
                 style="text-decoration: none"
-                >/farmers/:farmerId</a
+                >/farmlands/:/farmlandId/:farmerId</a
               >
             </td>
-            <td>Eliminação de um produtor já registado</td>
+            <td>
+              Eliminação de um pomar específico de um produtor específico,
+              identificados pelo ID do pomar e ID do produtor como parâmetros.
+            </td>
+          </tr>
+
+          <tr>
+            <td>GET</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/farmlands/:farmlandId/divisions"
+                target="_blank"
+                style="text-decoration: none"
+                >/farmlands/:/farmlandId/divisions</a
+              >
+            </td>
+            <td>
+              Leitura de todas as subdivisões do pomar identificado pelo ID do
+              pomar como parâmetro.
+            </td>
+          </tr>
+
+          <tr>
+            <td>POST</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/farmlands/:farmlandId/divisions"
+                target="_blank"
+                style="text-decoration: none"
+                >/farmlands/:/farmlandId/divisions</a
+              >
+            </td>
+            <td>
+              Registo de uma nova subdivisão do pomar identificado pelo ID do
+              pomar como parâmetro.
+            </td>
+          </tr>
+
+          <tr>
+            <td>GET</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/farmlands/:farmlandId/divisions/:divisionId"
+                target="_blank"
+                style="text-decoration: none"
+                >/farmlands/:/farmlandId/divisions/:divisionId</a
+              >
+            </td>
+            <td>
+              Leitura de uma divisão de o pomar específico identificados pelo ID
+              do pomar e ID da divisão do pomar como parâmetros.
+            </td>
+          </tr>
+          <tr>
+            <td>PATCH</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/farmlands/:farmlandId/divisions/:divisionId"
+                target="_blank"
+                style="text-decoration: none"
+                >/farmlands/:/farmlandId/divisions/:divisionId</a
+              >
+            </td>
+            <td>
+              Atualização de uma divisão de o pomar específico identificados
+              pelo ID do pomar e ID da divisão do pomar como parâmetros.
+            </td>
+          </tr>
+          <tr>
+            <td>DELETE</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/farmlands/:farmlandId/divisions/:divisionId"
+                target="_blank"
+                style="text-decoration: none"
+                >/farmlands/:/farmlandId/divisions/:divisionId</a
+              >
+            </td>
+            <td>
+              Eliminação de uma divisão de o pomar específico identificados pelo
+              ID do pomar e ID da divisão do pomar como parâmetros.
+            </td>
           </tr>
         </table>
       </div>

@@ -33,7 +33,7 @@ const getUserById = async (req, res) => {
   try {
     user = await User.find(
       { _id: ObjectId(userId) },
-      "-_id name.firstname name.lastname email role address.district"
+      "-_id fullname email role address.district"
     );
     return res.status(200).json(user);
   } catch (err) {
@@ -50,7 +50,7 @@ const getAllUsers = async (req, res) => {
   try {
     users = await User.find(
       {},
-      "-_id name.firstname name.lastname address.district"
+      "-_id fullname email role address.district"
     );
     return res.status(200).json(users);
   } catch (err) {

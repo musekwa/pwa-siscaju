@@ -39,7 +39,7 @@ const getAllFarmers = async (req, res) => {
   try {
     farmers = await Farmer.find(
       {},
-      "name.firstname name.lastname birthDate address.district"
+      "fullname birthDate address.district farmlands"
     );
     return res.status(200).json(farmers);
   } catch (err) {

@@ -16,7 +16,7 @@ app.use(farmlandRoutes);
 app.use(monitoringRoutes);
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.sendFile("index.html");
 });
 
 app.listen(config.port, (err) => {

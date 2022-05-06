@@ -1,7 +1,7 @@
 {
   "name": "pwa-siscaju",
   "version": "1.0.0",
-  "description": "",
+  "description": "Sistema de Monitoria de Cajueiros",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -9,7 +9,7 @@
     "test": "mocha --recursive --exit || true"
   },
   "keywords": [],
-  "author": "",
+  "author": "Evariste Musekwa Iguna",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.20.0",
@@ -32,5 +32,8 @@
     "mocha": "^10.0.0",
     "mockgoose": "^8.0.4",
     "supertest": "^6.2.3"
+  },
+  "engines": {
+    "node": "16.13.1"
   }
 }

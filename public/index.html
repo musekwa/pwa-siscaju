@@ -6,15 +6,267 @@
     rel="stylesheet"
   />
   <!-- <link rel="stylesheet" type="text/css" href="styles.css" /> -->
+  <style>
+    table,
+    th,
+    td {
+      border: 1px solid black;
+      border-collapse: collapse;
+    }
+    body {
+      padding-bottom: 35px;
+    }
+  </style>
 </head>
 <html>
-  <body>
-    <h1 style="text-align: center; margin-top: 40px; color: gray">Bem-vindo a SisCaju!</h1>
-    <div style="width: 500px; height: 150px; background-color: lightgray; margin: auto; text-align: center; ">
-        <p>Alguns 'endpoints' ja implementados:</p>
+  <body style="color: gray">
+    <h1 style="text-align: center; margin-top: 40px; color: gray">
+      Bem-vindo a SisCaju!
+    </h1>
+    <div
+      style="
+        width: 500px;
+        height: auto;
+        background-color: lightgray;
+        margin: auto;
+        text-align: center;
+      "
+    >
+      <p style="padding-top: 20px; color: gray">
+        Os “endpoints das APIs” já implementadas permitem realizar as operações
+        CRUD (Create, Read, Update e Delete) na base de dados. Esta aplicação
+        (backend) está acessível a partir do seguinte domínio:<br />
+        <a
+          href="https://pwa-siscaju.herokuapp.com/"
+          target="_blank"
+          style="text-decoration: none"
+          >https://pwa-siscaju.herokuapp.com/</a
+        >
+      </p>
+      <p>
+        Para realizar as operações <em>‘Create’</em> e <em>‘Update’</em>, é
+        ainda recomendado utilizar uma ferramenta para testar as APIs, como o
+        <a
+          href="https://www.postman.com/"
+          target="_blank"
+          style="text-decoration: none"
+          >Postman</a
+        >
+        ou outro similar.
+      </p>
     </div>
-    <p>Alguns 'endpoints' ja implementados</p>
-    
+    <div style="margin: auto; width: 500px; height: auto">
+      <div>
+        <p><strong>1. CRUD para utilizadores do SisCaju:</strong></p>
+        <table style="width: 100%">
+          <tr>
+            <th>Método</th>
+            <th>Endpoint</th>
+            <th>Descrição</th>
+          </tr>
+          <tr>
+            <td>GET</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/users"
+                target="_blank"
+                style="text-decoration: none"
+                >/users</a
+              >
+            </td>
+            <td>Leitura de todos os utilizadores já registados</td>
+          </tr>
+          <tr>
+            <td>POST</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/users"
+                target="_blank"
+                style="text-decoration: none"
+                >/users</a
+              >
+            </td>
+            <td>Registo de um novo utilizador</td>
+          </tr>
+          <tr>
+            <td>UPDATE</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/users/:userId"
+                target="_blank"
+                style="text-decoration: none"
+                >/users/:userId</a
+              >
+            </td>
+            <td>Atualização de um utilizador já registado</td>
+          </tr>
+          <tr>
+            <td>DELETE</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/users/:userId"
+                target="_blank"
+                style="text-decoration: none"
+                >/users/:userId</a
+              >
+            </td>
+            <td>Eliminação de um utilizador já registado</td>
+          </tr>
+        </table>
+      </div>
+      <br />
+      <hr />
+      <div>
+        <p><strong>2. CRUD para produtores do caju:</strong></p>
+        <table style="width: 100%">
+          <tr>
+            <th>Método</th>
+            <th>Endpoint</th>
+            <th>Descrição</th>
+          </tr>
+          <tr>
+            <td>GET</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/farmers"
+                target="_blank"
+                style="text-decoration: none"
+                >/farmers</a
+              >
+            </td>
+            <td>Leitura de todos os produtores já registados</td>
+          </tr>
+          <tr>
+            <td>POST</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/farmers"
+                target="_blank"
+                style="text-decoration: none"
+                >/farmers</a
+              >
+            </td>
+            <td>Registo de um novo produtor</td>
+          </tr>
+          <tr>
+            <td>GET</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/farmers/:farmerId"
+                target="_blank"
+                style="text-decoration: none"
+                >/farmers/:farmerId</a
+              >
+            </td>
+            <td>Leitura de um produtor, usando o seu ID como parâmetro</td>
+          </tr>
+          <tr>
+            <td>UPDATE</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/users"
+                target="_blank"
+                style="text-decoration: none"
+                >/farmers/:farmerId</a
+              >
+            </td>
+            <td>
+              Atualização de dados de um produtor, usando o seu ID como
+              parâmetro
+            </td>
+          </tr>
+          <tr>
+            <td>DELETE</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/users/:userId"
+                target="_blank"
+                style="text-decoration: none"
+                >/farmers/:farmerId</a
+              >
+            </td>
+            <td>Eliminação de um produtor já registado</td>
+          </tr>
+        </table>
+      </div>
+           <br />
+      <hr />
+      <div>
+        <p><strong>3. CRUD para pomares do caju e suas respetivas subdivisões:</strong></p>
+        <table style="width: 100%">
+          <tr>
+            <th>Método</th>
+            <th>Endpoint</th>
+            <th>Descrição</th>
+          </tr>
+          <tr>
+            <td>GET</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/farmlands"
+                target="_blank"
+                style="text-decoration: none"
+                >/farmlands</a
+              >
+            </td>
+            <td>Leitura de todos os pomares já registados</td>
+          </tr>
+          <tr>
+            <td>GET</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/farmlands/:farmlandId"
+                target="_blank"
+                style="text-decoration: none"
+                >/farmlands/:farmlandId</a
+              >
+            </td>
+            <td>Leitura de um pomar, usando o ID do pomar como parâmetro.</td>
+          </tr>
+          <tr>
+            <td>GET</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/farmlands/:farmerId"
+                target="_blank"
+                style="text-decoration: none"
+                >/farmlands/:farmerId</a
+              >
+            </td>
+            <td>Leitura dos pomares pertencendo ao 
+                produtor, usando o ID do produtor como parâmetro</td>
+          </tr>
+          <tr>
+            <td>POST</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/farmlands/:farmerId"
+                target="_blank"
+                style="text-decoration: none"
+                >/farmlands/:farmerId</a
+              >
+            </td>
+            <td>
+              Registo do pomar pertencendo ao 
+                produtor, usando o ID do produtor como parâmetro
+            </td>
+          </tr>
+          <tr>
+            <td>DELETE</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/users/:userId"
+                target="_blank"
+                style="text-decoration: none"
+                >/farmers/:farmerId</a
+              >
+            </td>
+            <td>Eliminação de um produtor já registado</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
     <!-- <script type="text/javascript" src="main.js"></script> -->
   </body>
 </html>

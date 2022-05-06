@@ -15,6 +15,10 @@ app.use(farmlandRoutes);
 // app.use(farmDivisionRoutes);
 app.use(monitoringRoutes);
 
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
+
 app.listen(config.port, (err) => {
   if (err) {
     console.log(err);

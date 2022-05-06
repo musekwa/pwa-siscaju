@@ -1,5 +1,5 @@
 # pwa-siscaju
 ## Sistema de Monitoria das Plantações.
 
-Como  testar esta aplicação:
-1. Seguir o link (URL): https://pwa-siscaju.herokuapp.com/ 
+Para testar esta aplicação:
+1. Seguir o seguinte link (URL): https://pwa-siscaju.herokuapp.com/ onde obtera instruções detalhadas sobre como proceder.

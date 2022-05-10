@@ -1,88 +1,151 @@
-import Farmer from "../models/farmer.model.js";
+import farmerService from "../services/farmer.services.js";
 import _ from "lodash";
-import mongoose from "mongoose";
 
-const ObjectId = mongoose.Types.ObjectId;
+const {
+  getAllFarmersService,
+  addFarmerService,
+  getFarmerByIdService,
+  updateFarmerService,
+  deleteFarmerService,
+} = farmerService;
+
+// list all registered farmers
+const getAllFarmers = async (req, res) => {
+  try {
+    let farmers = await getAllFarmersService();
+    if (!farmers) {
+      res.status(404).send({
+        status: "NOT FOUND",
+        message: "Produtores nao encontrados",
+      });
+    }
+    res.status(200).send({
+      status: "OK",
+      data: farmers,
+    });
+  } catch (error) {
+    res.status(error?.status || 500).send({
+      status: "FAILED",
+      data: { error: error?.error || error },
+    });
+  }
+};
 
 // register a new farmer
 // Duplicates must not be allowed
 const addFarmer = async (req, res) => {
-  const farmer = new Farmer(req.body);
+  const { body } = req;
+  if (!body.fullname || !body.birthDate || !body.birthPlace) {
+    res.status(400).send({
+      status: "FAILED",
+      message:
+        "Os campos de dados: fullname, birthDate e birthPlace sao obrigatorio",
+    });
+  }
+
   try {
-    await farmer.save();
-    return res.status(200).json(farmer);
-  } catch (err) {
-    return res.status(400).json({
-      message: err.message,
+    let savedFarmer = await addFarmerService(body);
+    res.status(201).send({
+      status: "OK",
+      data: savedFarmer,
+    });
+  } catch (error) {
+    res.status(error?.status || 500).send({
+      status: "FAILED",
+      data: { error: error?.error || error },
     });
   }
 };
-
 
 // get farmer by id with their farmlands
 const getFarmerById = async (req, res) => {
-  const farmerId = ObjectId(req.params.farmerId);
-
-  try {
-    const farmer = await Farmer.findById(farmerId).populate("farmlands");
-    return res.status(200).json(farmer);
-  } catch (err) {
-    return res.status(400).json({
-      message: err.message,
+  const {
+    params: { farmerId },
+  } = req;
+  if (!farmerId) {
+    res.status(400).send({
+      status: "FAILED",
+      data: { error: "O parametro ':farmerId' nao pode ser vazio" },
     });
   }
-};
-
-// list all registered farmers
-const getAllFarmers = async (req, res) => {
-  let farmers;
   try {
-    farmers = await Farmer.find(
-      {},
-      "fullname birthDate address.district farmlands"
-    );
-    return res.status(200).json(farmers);
-  } catch (err) {
-    return res.status(400).json({
-      message: err.message,
+    const foundFarmer = await getFarmerByIdService(farmerId);
+    if (!foundFarmer) {
+      res.status(404).send({
+        status: "NOT FOUND",
+        message: "Produtor nao encontrado",
+      });
+    }
+    res.status(200).send({
+      status: "OK",
+      data: foundFarmer,
+    });
+  } catch (error) {
+    res.status(error?.status || 500).send({
+      status: "FAILED",
+      data: { error: error?.error || error },
     });
   }
 };
 
 // update an already-registered farmer
 const updateFarmer = async (req, res) => {
-  const farmerId = req.params.farmerId;
-  const { name, address } = req.body;
+  const {
+    body,
+    params: { farmerId },
+  } = req;
+  if (!farmerId) {
+    res.status(400).send({
+      status: "FAILED",
+      message: "O parametro ':farmerId' nao pode ser vazio",
+    });
+  }
 
   try {
-    let farmer = await Farmer.findOneAndUpdate(
-      { _id: ObjectId(farmerId) },
-      { name, address },
-      { runValidators: true, new: true }
-    );
-
-    return res.status(200).json(farmer);
-  } catch (err) {
-    return res.status(404).json({
-      message: err.message,
+    let updatedFarmer = await updateFarmerService(farmerId, body);
+    if (!updatedFarmer) {
+      res.status(404).send({
+        status: "NOT FOUND",
+        message: "Produtor nao encontrados",
+      });
+    }
+    res.status(200).send({
+      status: "OK",
+      data: updatedFarmer,
+    });
+  } catch (error) {
+    res.status(error?.error || 500).send({
+      status: "FAILED",
+      data: { error: error?.error || error },
     });
   }
 };
 
 // delete a registered farmer
 const deleteFarmer = async (req, res) => {
-  const farmerId = req.params.farmerId;
-  try {
-    let farmer = await Farmer.deleteOne({ _id: ObjectId(farmerId) });
-    return res.status(200).json({
-      message: "O produtor foi eliminado com sucesso",
+  const {
+    params: { farmerId },
+  } = req;
+  if (!farmerId) {
+    res.status(400).send({
+      status: "FAILED",
+      message: "O parametro ':farmerId' nao pode ser vazio",
     });
-  } catch (err) {
-    return res.status(404).json({
-      message: err.message,
+  }
+  try {
+    let deletedFarmer = await deleteFarmerService(farmerId);
+    return res.status(200).json({
+      status: "OK",
+      data: deletedFarmer,
+    });
+  } catch (error) {
+    return res.status(error?.status || 500).send({
+      status: "FAILED",
+      data: { error: error?.error || error },
     });
   }
 };
+
 
 export default {
   addFarmer,
@@ -90,5 +153,4 @@ export default {
   getAllFarmers,
   updateFarmer,
   deleteFarmer,
-  // getFarmerAndFarmlands,
 };

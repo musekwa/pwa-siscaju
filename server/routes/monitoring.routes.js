@@ -1,7 +1,5 @@
-import express from "express";
+import router from "./index.js";
 import monitoringController from "../controllers/monitoring.controllers.js";
-
-const router = express.Router();
 
 router
   .route("/monitorings")

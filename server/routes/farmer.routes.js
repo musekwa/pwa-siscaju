@@ -1,5 +1,6 @@
-import express from "express";
+import router from "./index.js";
 import farmerController from "../controllers/farmer.controllers.js";
+import farmlandController from "../controllers/farmland.controllers.js";
 
 const {
   addFarmer,
@@ -7,20 +8,19 @@ const {
   getFarmerById,
   updateFarmer,
   deleteFarmer,
-  // getFarmerAndFarmlands,
+  // addFarmlandByFarmerId,
 } = farmerController;
 
-const router = express.Router();
+const { addFarmlandByFarmerId,  } = farmlandController;
 
-router
-  .route("/farmers")
-  .get(getAllFarmers)
-  .post(addFarmer);
+router.route("/farmers").get(getAllFarmers).post(addFarmer);
 
 router
   .route("/farmers/:farmerId")
   .get(getFarmerById)
-  .put(updateFarmer)
+  .patch(updateFarmer)
   .delete(deleteFarmer);
+
+
 
 export default router;

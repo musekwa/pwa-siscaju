@@ -16,6 +16,19 @@ const farmersSchema = mongoose.Schema(
       type: Date,
       required: true,
     },
+    birthPlace: {
+      province: {
+        type: String,
+        trim: true,
+      },
+      district: {
+        type: String,
+        trim: true,
+        // required: [true, "Obrigatorio indicar o distrito de nascimento"],
+      },
+      territory: { type: String, trim: true },
+      village: { type: String, trim: true },
+    },
     address: {
       province: {
         type: String,
@@ -97,12 +110,14 @@ farmersSchema.pre("save", function (next) {
   }
 });
 
-// // case-titling and sanitizing the name 
+// // case-titling and sanitizing the name
 farmersSchema.pre("save", function (next) {
   let names = this.fullname.split(" ");
   if (names.length > 1) {
-    let filteredName = names.filter((name) => (name !== ""));
-    let normalizedName = filteredName.map(name=>name.charAt(0).toUpperCase() + name.slice(1).toLowerCase())
+    let filteredName = names.filter((name) => name !== "");
+    let normalizedName = filteredName.map(
+      (name) => name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()
+    );
     this.fullname = normalizedName.join(" ");
   }
   next();

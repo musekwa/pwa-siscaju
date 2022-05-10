@@ -1,9 +1,7 @@
-import express from "express";
+import router from "./index.js";
 import userController from "../controllers/user.controllers.js";
 
 const { getAllUsers, getUserById, addUser, updateUser, deleteUser } = userController
-
-const router = express.Router();
 
 router
   .route("/users")
@@ -13,7 +11,7 @@ router
 router
   .route("/users/:userId")
   .get(getUserById)
-  .put(updateUser)
+  .patch(updateUser)
   .delete(deleteUser);
 
 export default router;

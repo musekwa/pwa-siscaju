@@ -1,8 +1,15 @@
-import User from "../models/user.model.js";
+import userService from "../services/user.services.js";
 import _ from "lodash";
-import mongoose from "mongoose";
+import expressValidator from "express-validator";
 
-const ObjectId = mongoose.Types.ObjectId;
+const {
+  getAllUsersService,
+  addUserService,
+  getUserByIdService,
+  updateUserService,
+  deleteUserService,
+} = userService;
+const { body, validationResult } = expressValidator;
 
 /**
  * user coontrollers:
@@ -13,83 +20,144 @@ const ObjectId = mongoose.Types.ObjectId;
  * 5. deleteUser: delete the user
  */
 
+// get all registered users
+const getAllUsers = async (req, res) => {
+  try {
+    let users = await getAllUsersService();
+    if (!users) {
+      res.status(404).send({
+        status: "NOT FOUND",
+        message: "Utilizadores nao encontrados",
+      });
+    }
+    res.status(200).send({
+      status: "OK",
+      data: users,
+    });
+  } catch (error) {
+    res.status(error?.status || 500).send({
+      status: "FAILED",
+      data: { error: error?.message || error },
+    });
+  }
+};
+
 // register a new user
 const addUser = async (req, res) => {
-  const user = new User(req.body);
+  const { body } = req;
+  if (!body.fullname || !body.email || !body.hashedPassword || !body.role) {
+    res.status(400).send({
+      status: "FAILED",
+      data: {
+        error:
+          "Alguns campos de dados obrigatorios sao vazios: fullname, email, password, role",
+      },
+    });
+  }
+
   try {
-    await user.save();
-    return res.status(200).json(user);
-  } catch (err) {
-    return res.status(400).json({
-      message: err.message,
+    let savedUser = await addUserService(body);
+    res.status(201).send({
+      status: "OK",
+      data: savedUser,
+    });
+  } catch (error) {
+    res.status(error?.status || 500).send({
+      status: "FAILED",
+      data: { error: error?.message || error },
     });
   }
 };
 
 // get user by ID
 const getUserById = async (req, res) => {
-  let user;
-  const userId = req.params.userId;
-  try {
-    user = await User.find(
-      { _id: ObjectId(userId) },
-      "_id fullname email role address.district"
-    );
-    return res.status(200).json(user);
-  } catch (err) {
-    return res.status(400).json({
-      message: err.message,
+  // const userId = req.params.userId;
+  const {
+    params: { userId },
+  } = req;
+  if (!userId) {
+    res.status(400).send({
+      status: "FAILED",
+      data: { error: "O parametro ':userId' nao pode ser vazio" },
     });
   }
-};
-
-// get all registered users
-const getAllUsers = async (req, res) => {
-  let users;
-
   try {
-    users = await User.find(
-      {},
-      "_id fullname email role address.district"
-    );
-    return res.status(200).json(users);
-  } catch (err) {
-    return res.status(400).json({
-      message: err.message,
+    let foundUser = await getUserByIdService(userId);
+    if (!foundUser) {
+      res.status(404).send({
+        status: "NOT FOUND",
+        message: "Utilizador nao encontrado",
+      });
+    }
+    res.status(200).send({
+      status: "OK",
+      data: foundUser,
+    });
+  } catch (error) {
+    res.status(error?.status || 500).json({
+      status: "FAILED",
+      data: { error: error?.message || error },
     });
   }
 };
 
 // update an already-registered user
 const updateUser = async (req, res) => {
-  const userId = req.params.userId;
-  const { name, role } = req.body;
+  const {
+    body,
+    params: { userId },
+  } = req;
+
+  if (!userId) {
+    res.status(400).send({
+      status: "FAILED",
+      data: { error: error?.message || error },
+    });
+  }
 
   try {
-    let user = await User.findOneAndUpdate(
-      { _id: ObjectId(userId) },
-      { name, role },
-      { runValidators: true, new: true }
-    );
-    return res.status(200).json(user);
-  } catch (err) {
-    return res.status(404).json({
-      message: err.message,
+    let updatedUser = await updateUserService(userId, body);
+    if (!updatedUser) {
+      res.status(404).send({
+        status: "NOT FOUND",
+        message: "Utilizador nao encontrado",
+      });
+    }
+    res.status(200).send({
+      status: "OK",
+      data: updatedUser,
+    });
+  } catch (error) {
+    res.status(error?.status || 500).send({
+      status: "FAILED",
+      data: { error: error?.message || error },
     });
   }
 };
 
 // delete a registered user
 const deleteUser = async (req, res) => {
-  const userId = req.params.userId;
+  const {
+    params: { userId },
+  } = req;
+
+  if (!userId) {
+    res.status(400).send({
+      status: "FAILED",
+      data: { error: error?.error || error },
+    });
+  }
+
   try {
-    let user = await User.deleteOne({ _id: ObjectId(userId) });
-    return res.status(200).json({
-      message: "O utilizador foi eliminado com sucesso",
+    let deletedUser = await deleteUserService(userId);
+    res.status(200).send({
+      status: "OK",
+      message: "O utilizador apagado com sucesso",
     });
   } catch (err) {
-    return res.status(404).json({
-      message: err.message,
+    return res.status(error?.error || 500).send({
+      status: "FAILED",
+      data: { error: error?.message || error },
     });
   }
 };

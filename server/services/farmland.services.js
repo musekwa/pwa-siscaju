@@ -82,7 +82,28 @@ const getOneFarmlandByFarmerIdService = async (farmerId, farmlandId) => {
   }
 };
 
-const updateFarmlandService = () => {};
+const updateFarmlandService = async (farmerId, farmlandId, body) => {
+  try{
+      let updatedFarmland = await Farmland.findOneAndUpdate(
+      { _id: ObjectId(farmlandId), farmer: ObjectId(farmerId) },
+      body,
+      { runValidators: true, new: true }
+    );
+    if (!updatedFarmland) {
+      return {
+        status: 404,
+        message: "Pomar nao encontrado"
+      }
+    }
+
+    return updatedFarmland;
+  } catch (error) {
+    throw {
+      status: "FAILED", 
+      message: error?.message || error,
+    };
+  }
+};
 
 const deleteFarmlandService = () => {};
 

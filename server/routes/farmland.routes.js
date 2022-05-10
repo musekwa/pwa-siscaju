@@ -4,7 +4,7 @@ import farmDivisionController from "../controllers/farmDivision.controllers.js";
 
 const {
   getFarmlands,
-  getFarmlandById,
+  // getFarmlandById,
   addFarmlandByFarmerId,
   getFarmlandsByFarmerId,
   getOneFarmlandByFarmerId,
@@ -27,7 +27,11 @@ router.route("/farmers/:farmerId/farmland").post(addFarmlandByFarmerId);
 
 router.route("/farmers/:farmerId/farmlands").get(getFarmlandsByFarmerId);
 
-router.route("/farmers/:farmerId/farmlands/:farmlandId").get(getOneFarmlandByFarmerId);
+router
+  .route("/farmers/:farmerId/farmlands/:farmlandId")
+  .get(getOneFarmlandByFarmerId)
+  .patch(updateFarmland)
+  .delete(deleteFarmland);
 
 /**
  * Creating a farmland is by farmer's id

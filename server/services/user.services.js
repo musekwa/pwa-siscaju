@@ -79,8 +79,8 @@ const updateUserService = async (userId, body) => {
 
 const deleteUserService = async (userId) => {
   try {
-    let deletedUser = await User.deleteOne({ _id: ObjectId(userId) });
-    return deletedUser;
+    let deletionResult = await User.deleteOne({ _id: ObjectId(userId) });
+    return deletionResult;
   } catch (error) {
     throw {
       status: 500,

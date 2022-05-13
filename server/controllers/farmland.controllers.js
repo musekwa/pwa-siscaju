@@ -8,21 +8,28 @@ const ObjectId = mongoose.Types.ObjectId;
 
 const {
   getFarmlandsByFarmerIdService,
-  addFarmlandByFarmerIdService,
+  addFarmlandService,
   getFarmlandsService,
   getOneFarmlandByFarmerIdService,
   updateFarmlandService,
 } = farmlandServices;
 
 // create a new farmland by farmer (farmerId)
-const addFarmlandByFarmerId = async (req, res) => {
+const addFarmland = async (req, res) => {
   const {
     body,
-    params: { farmerId },
+    query: { farmerId },
   } = req;
 
+  if (!farmerId || !body) {
+    res.status(400).send({
+      status: "FAILED",
+      message:
+        "Algo foi esquecido: ou o parametro 'farmerId' ou dados do pomar (body)",
+    });
+  }
   try {
-    let savedFarmland = await addFarmlandByFarmerIdService(farmerId, body);
+    let savedFarmland = await addFarmlandService(farmerId, body);
     res.status(201).send({
       status: "OK",
       data: { farmer: savedFarmland.farmer, farmland: savedFarmland.farmland },
@@ -35,54 +42,22 @@ const addFarmlandByFarmerId = async (req, res) => {
   }
 };
 
-// get all the farmer's farmlands by farmerId
-const getFarmlandsByFarmerId = async (req, res) => {
-  const {
-    params: { farmerId },
-  } = req;
-
-  try {
-    const foundFarmlands = await getFarmlandsByFarmerIdService(farmerId);
-    if (!foundFarmlands) {
-      res.status(404).send({
-        status: "NOT FOUND",
-        message: "Pomares nao encontrados",
-      });
-    }
-    res.status(200).send({
-      status: "OK",
-      data: foundFarmlands,
-    });
-  } catch (error) {
-    res.status(error?.status || 500).send({
-      status: "OK",
-      data: { error: error?.error || error },
-    });
-  }
-};
-
-// get a famrland by Id and its subdivisions
-// const getFarmlandById = async (req, res) => {
-//   console.log("getFarmland is called!");
-//   // let farmland;
-//   const farmlandId = ObjectId(req.params.farmlandId);
-//   try {
-//     const farmland = await Farmland.findById(farmlandId).populate(
-//       "farmDivisions"
-//     );
-//     // console.log('farmland: ', farmland)
-//     return res.status(200).json(farmland);
-//   } catch (err) {
-//     return res.status(400).json({
-//       message: err.message,
-//     });
-//   }
-// };
-
-// list all registered farmlands
+// list registered farmlands by passed queries
 const getFarmlands = async (req, res) => {
+  const {
+    query: { farmerId, farmlandId },
+  } = req;
+ 
   try {
-    let farmlands = await getFarmlandsService();
+    let farmlands;
+    if (!farmerId && !farmlandId) {  // get all registered farmlands
+      farmlands = await getFarmlandsService();
+    } else if (farmerId && !farmlandId) { // get all farmlands belonging to the farmerId's owner
+      farmlands = await getFarmlandsByFarmerIdService(farmerId)
+    }
+    else if (farmerId && farmlandId){ // get one farmland by farmlandId and farmerId
+      farmlands = await getOneFarmlandByFarmerIdService(farmerId, farmlandId);
+    }
     if (!farmlands) {
       res.status(404).send({
         status: "NOT FOUND",
@@ -101,37 +76,20 @@ const getFarmlands = async (req, res) => {
   }
 };
 
-const getOneFarmlandByFarmerId = async (req, res) => {
-  const {
-    params: { farmerId, farmlandId },
-  } = req;
-
-  try {
-    let foundFarmland = await getOneFarmlandByFarmerIdService(
-      farmerId,
-      farmlandId
-    );
-    if (!foundFarmland) {
-      res.status(404).send({
-        status: "NOT FOUND",
-        message: "Pomar nao encontrado!",
-      });
-    }
-    res.status(200).send({ status: "OK", data: foundFarmland });
-  } catch (error) {
-    res.status(error?.status || 500).send({
-      status: "FAILED",
-      data: { error: error?.error || error },
-    });
-  }
-};
 
 // update an already-registered farmland
 const updateFarmland = async (req, res) => {
   const {
     body,
-    params: { farmerId, farmlandId },
+    query: { farmerId, farmlandId },
   } = req;
+
+  if (!farmerId || !farmlandId) {
+    res.status(400).send({
+      status: "FAILED",
+      message: "Deve especificar ':farmerId' e ':farmlandId'",
+    });
+  }
 
   try {
     let updatedFarmland = await updateFarmlandService(
@@ -157,31 +115,49 @@ const updateFarmland = async (req, res) => {
 
 // delete a registered farmland
 const deleteFarmland = async (req, res) => {
-  const { params: { farmerId, farmlandId }} = req;
+  const {
+    query: { farmerId, farmlandId },
+  } = req;
+
+  if (!farmerId || !farmlandId) {
+    res.status(400).send({
+      status: "FAILED",
+      message: "Deve especificar 'farmerId' e 'farmlandId'",
+    });
+    return ;
+  }
 
   try {
-    let foundFarmland = await Farmland.deleteOne({ _id: ObjectId(farmlandId), farmer: ObjectId(farmerId) });
-    if (!foundFarmland){
+    let foundFarmland = await Farmland.deleteOne({
+      _id: ObjectId(farmlandId),
+      farmer: ObjectId(farmerId),
+    });
+    console.log("found farmland:", foundFarmland);
+    if (!foundFarmland) {
       res.status(404).send({
         status: "NOT FOUND",
-        message: "Pomar nao encontrado"
+        message: "Pomar nao encontrado",
       });
     }
     let farmlandOwner = await Farmer.findById(ObjectId(farmerId));
-    if (!farmlandOwner){
+    if (!farmlandOwner) {
       res.status(404).send({
-        status: "NOT FOUND", message: "Proprietario do pomar nao encontrado",
-      })
+        status: "NOT FOUND",
+        message: "Proprietario do pomar nao encontrado",
+      });
     }
-    farmlandOwner.farmlands = farmlandOwner.farmlands.filter((id)=>id !== ObjectId(farmlandId));
+    farmlandOwner.farmlands = farmlandOwner.farmlands.filter(
+      (id) => id !== ObjectId(farmlandId)
+    );
     await farmlandOwner.save();
 
-    res.status(200).json({
+    res.status(204).send({
       status: "OK",
       message: "Pomar eliminado com sucesso!",
     });
+    return ;
   } catch (error) {
-    res.status(error?.status || 500).json({
+    return res.status(error?.status || 500).send({
       status: "FAILED",
       message: error?.message || error,
     });
@@ -189,10 +165,7 @@ const deleteFarmland = async (req, res) => {
 };
 
 export default {
-  addFarmlandByFarmerId,
-  getFarmlandsByFarmerId,
-  getOneFarmlandByFarmerId,
-  // getFarmlandById,
+  addFarmland,
   getFarmlands,
   updateFarmland,
   deleteFarmland,

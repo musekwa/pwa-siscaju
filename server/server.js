@@ -7,7 +7,7 @@ import helmet from "helmet";
 import userRoutes from "./routes/user.routes.js";
 import farmerRoutes from "./routes/farmer.routes.js";
 import farmlandRoutes from "./routes/farmland.routes.js";
-// import farmDivisionRoutes from "./routes/farmDivision.routes.js";
+import farmDivisionRoutes from "./routes/farmDivision.routes.js";
 import monitoringRoutes from './routes/monitoring.routes.js'
 import dbConnection from '../config/db.js';
 
@@ -37,7 +37,7 @@ export default {
   app,
   userRoutes,
   farmerRoutes,
-  // farmDivisionRoutes,
+  farmDivisionRoutes,
   farmlandRoutes,
   monitoringRoutes,
 };

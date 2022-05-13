@@ -133,13 +133,10 @@ const deleteFarmer = async (req, res) => {
     });
   }
   try {
-    let deletedFarmer = await deleteFarmerService(farmerId);
-    return res.status(200).json({
-      status: "OK",
-      data: deletedFarmer,
-    });
+    let deletionResult = await deleteFarmerService(farmerId);
+    res.status(204).send(deletionResult);
   } catch (error) {
-    return res.status(error?.status || 500).send({
+    res.status(error?.status || 500).send({
       status: "FAILED",
       data: { error: error?.error || error },
     });

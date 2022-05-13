@@ -2,128 +2,130 @@ import FarmDivision from "../models/farmDivision.model.js";
 import _ from "lodash";
 import mongoose from "mongoose";
 import Farmland from "../models/farmland.model.js";
+import farmDivisionServices from "../services/farmDivision.services.js";
 
 const ObjectId = mongoose.Types.ObjectId;
 
+const {
+  getFarmDivisionService,
+  getOneFarmDivisionService,
+  addFarmDivisionService,
+  updateFarmDivisionService,
+  deleteFarmDivisionService,
+} = farmDivisionServices;
+
 // registering a new farmDivision by farmland's id
 // duplicates not being allowed
-const addFarmlandDivision = async (req, res) => {
-  const farmlandId = ObjectId(req.params.farmlandId);
-  const farmDivision = new FarmDivision(req.body);
+const addFarmDivision = async (req, res) => {
+  const {
+    body,
+    params: { farmlandId },
+  } = req;
+
   try {
-    let farmland = await Farmland.findById(farmlandId);
-    if (!farmland) {
-      return res.status(404).json({
-        message: "Este pomar nao existe",
+    if (!farmlandId) {
+      res.status(400).send({
+        status: "FAILED",
+        message: "Deve especificar o 'farmlandId' do pomar",
       });
+      return;
     }
-    farmDivision.farmland = farmland;
-    farmland.farmDivisions.push(farmDivision);
-    await farmDivision.save();
-    await farmland.save();
-    return res.status(200).json(farmDivision);
-  } catch (err) {
-    return res.status(400).json({
-      message: err.message,
+
+    let farmland = await addFarmDivisionService(farmlandId, body);
+    res.status(200).send({
+      status: "OK",
+      data: farmland,
     });
+    return;
+  } catch (error) {
+    res.status(error?.status || 500).send({
+      status: "FAILED",
+      data: { error: error?.error || error },
+    });
+    return;
   }
 };
 
 // get farmland divisions by farmland's id
-const getFarmlandDivisions = async (req, res) => {
-  const farmlandId = ObjectId(req.params.farmlandId);
+const getFarmDivisions = async (req, res) => {
+  const {
+    params: { farmlandId },
+    query: { divisionId },
+  } = req;
   try {
-    let farmDivisions = await FarmDivision.find({ farmland: farmlandId });
-    if (!farmDivisions) {
-      return res.status(404).json({
-        message: "Estassubdivisoes de pomar nao existem",
-      });
+    let foundFarmDivisions;
+    if (farmlandId && !divisionId) {
+      foundFarmDivisions = await getFarmDivisionService(farmlandId);
+    } else if (farmlandId && divisionId) {
+      foundFarmDivisions = await getOneFarmDivisionService(
+        farmlandId,
+        divisionId
+      );
     }
-
-    return res.status(200).json(farmDivisions);
-  } catch (err) {
-    return res.status(400).json({
-      message: err.message,
+    res.status(200).send({
+      status: "OK",
+      data: foundFarmDivisions,
     });
-  }
-};
-
-// get a farmland division by farmland's id
-const getFarmlandDivision = async (req, res) => {
-  const farmlandId = ObjectId(req.params.farmlandId);
-  const divisionId = ObjectId(req.params.divisionId);
-  try {
-    let farmDivision = await FarmDivision.find({
-      farmland: farmlandId,
-      _id: divisionId,
-    });
-    if (!farmDivision) {
-      return res.status(404).json({
-        message: "Esta subdivisao de pomar nao existe",
-      });
-    }
-
-    return res.status(200).json(farmDivision);
-  } catch (err) {
-    return res.status(400).json({
-      message: err.message,
+    return;
+  } catch (error) {
+    res.status(error?.status || 500).send({
+      status: "FAILED",
+      data: { error: error?.error || error },
     });
   }
 };
 
 // update an already-registered farmDivision
-const updateFarmlandDivision = async (req, res) => {
-  const divisionId = req.params.divisionId;
-  const { trees, spacing } = req.body;
-
-  try {
-    let farmDivision = await FarmDivision.findOneAndUpdate(
-      { _id: ObjectId(divisionId) },
-      { trees, spacing },
-      { runValidators: true, new: true }
-    );
-
-    return res.status(200).json(farmDivision);
-  } catch (err) {
-    return res.status(404).json({
-      message: err.message,
+const updateFarmDivision = async (req, res) => {
+  const {
+    body,
+    params: { farmlandId },
+    query: { divisionId },
+  } = req;
+  if (farmlandId && divisionId) {
+    try {
+      let updatedFarmDivision = await updateFarmDivisionService(
+        divisionId,
+        body
+      );
+      res.status(200).send({
+        status: "OK",
+        data: updatedFarmDivision,
+      });
+    } catch (error) {
+      res.status(error?.status || 500).send({
+        status: "FAILED",
+        data: { error: error?.error || error },
+      });
+    }
+  } else {
+    res.status(400).send({
+      status: "FAILED",
+      message: "Deve especificar 'farmlandId' e 'divisionId'",
     });
   }
 };
 
 // delete a registered farmDivision
-const deleteFarmlandDivision = async (req, res) => {
-  const divisionId = req.params.divisionId;
-  const farmlandId = req.params.farmlandId;
+const deleteFarmDivision = async (req, res) => {
+  const {
+    params: { farmlandId },
+    query: { divisionId },
+  } = req;
   try {
-    await FarmDivision.deleteOne({
-      _id: ObjectId(divisionId),
-      farmland: ObjectId(farmlandId),
-    });
-    let farmland = await Farmland.findById(farmlandId);
-    const divisionIndex = farmland.farmDivisions.indexOf(divisionId);
-    if (!farmland || divisionIndex == -1) {
-      return res.status(200).json({
-        message: "A subdivisao foi eliminada com sucesso",
-      });
-    }
-
-    farmland.farmDivisions.splice(divisionIndex, 1);
-    await farmland.save();
-    return res.status(200).json({
-      message: "A subdivisao foi eliminada com sucesso",
-    });
-  } catch (err) {
-    return res.status(404).json({
-      message: err.message,
+    let deletionResult = await deleteFarmDivisionService(farmlandId, divisionId);
+    return res.status(200).json(deletionResult);
+  } catch (error) {
+    res.status(error?.status || 500).send({
+      status: "FAILED",
+      data: { error: error?.error || error },
     });
   }
 };
 
 export default {
-  addFarmlandDivision,
-  getFarmlandDivisions,
-  getFarmlandDivision,
-  updateFarmlandDivision,
-  deleteFarmlandDivision,
+  addFarmDivision,
+  getFarmDivisions,
+  updateFarmDivision,
+  deleteFarmDivision,
 };

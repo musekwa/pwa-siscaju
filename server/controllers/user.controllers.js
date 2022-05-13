@@ -149,11 +149,8 @@ const deleteUser = async (req, res) => {
   }
 
   try {
-    let deletedUser = await deleteUserService(userId);
-    res.status(200).send({
-      status: "OK",
-      message: "O utilizador apagado com sucesso",
-    });
+    let deletionResult = await deleteUserService(userId);
+    res.status(204).send(deletionResult);
   } catch (err) {
     return res.status(error?.error || 500).send({
       status: "FAILED",

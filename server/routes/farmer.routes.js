@@ -8,10 +8,8 @@ const {
   getFarmerById,
   updateFarmer,
   deleteFarmer,
-  // addFarmlandByFarmerId,
 } = farmerController;
 
-const { addFarmlandByFarmerId,  } = farmlandController;
 
 router.route("/farmers").get(getAllFarmers).post(addFarmer);
 
@@ -20,6 +18,7 @@ router
   .get(getFarmerById)
   .patch(updateFarmer)
   .delete(deleteFarmer);
+
 
 
 

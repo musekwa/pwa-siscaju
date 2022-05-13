@@ -22,7 +22,7 @@ const getFarmlandsService = async () => {
   }
 };
 
-const addFarmlandByFarmerIdService = async (farmerId, body) => {
+const addFarmlandService = async (farmerId, body) => {
   let newFarmland = new Farmland(body);
 
   try {
@@ -108,7 +108,7 @@ const updateFarmlandService = async (farmerId, farmlandId, body) => {
 const deleteFarmlandService = () => {};
 
 export default {
-  addFarmlandByFarmerIdService,
+  addFarmlandService,
   // addFarmlandService,
   //   getFarmlandByIdService,
   getFarmlandsService,

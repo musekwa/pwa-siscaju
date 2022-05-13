@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import Farmer from "../models/farmer.model.js";
-import Farmland from "../models/farmland.model.js";
 
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -79,10 +78,10 @@ const updateFarmerService = async (farmerId, body) => {
 
 const deleteFarmerService = async (farmerId) => {
   try {
-    let deletedFarmer = await Farmer.deleteOne({
+    let deletionResult = await Farmer.deleteOne({
       _id: ObjectId(farmerId),
     });
-    return deletedFarmer;
+    return deletionResult;
   } catch (error) {
     throw {
       status: 500,

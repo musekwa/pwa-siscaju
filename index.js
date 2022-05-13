@@ -12,7 +12,7 @@ const {
 app.use(userRoutes);
 app.use(farmerRoutes);
 app.use(farmlandRoutes);
-// app.use(farmDivisionRoutes);
+app.use(farmDivisionRoutes);
 app.use(monitoringRoutes);
 
 app.get("/", (req, res) => {

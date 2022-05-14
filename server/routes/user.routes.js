@@ -1,11 +1,15 @@
 import router from "./index.js";
-import userController from "../controllers/user.controllers.js";
-
-const { getAllUsers, getUserById, addUser, updateUser, deleteUser } = userController
+import {
+  getUsers,
+  getUserById,
+  addUser,
+  updateUser,
+  deleteUser,
+} from "../controllers/user.controllers.js";
 
 router
   .route("/users")
-  .get(getAllUsers)
+  .get(getUsers)
   .post(addUser);
 
 router

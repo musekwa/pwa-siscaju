@@ -1,12 +1,10 @@
 import express from "express";
-import farmDivisionController from "../controllers/farmDivision.controllers.js";
-
-const {
+import {
   getFarmDivisions,
   addFarmDivision,
   updateFarmDivision,
   deleteFarmDivision,
-} = farmDivisionController;
+} from "../controllers/farmDivision.controllers.js";
 
 const router = express.Router();
 

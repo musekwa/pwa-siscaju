@@ -1,29 +1,40 @@
-import userService from "../services/user.services.js";
-import _ from "lodash";
-import expressValidator from "express-validator";
-
-const {
-  getAllUsersService,
+import {
+  getUsersService,
+  getUsersByRoleService,
   addUserService,
   getUserByIdService,
   updateUserService,
   deleteUserService,
-} = userService;
+} from "../services/user.services.js";
+import _ from "lodash";
+import expressValidator from "express-validator";
+
 const { body, validationResult } = expressValidator;
 
 /**
  * user coontrollers:
  * 1. addUser: registers a new user
  * 2. getUserById:
- * 4. getAllUsers: list all the users
+ * 4. getUsers: list all the users
  * 4. updateUser: update some user's fields
  * 5. deleteUser: delete the user
  */
 
 // get all registered users
-const getAllUsers = async (req, res) => {
+const getUsers = async (req, res) => {
+  const {
+    query: { role },
+  } = req;
+
   try {
-    let users = await getAllUsersService();
+    let users;
+    if (role) {
+      users = await getUsersByRoleService(role);
+    }
+    else{
+      users = await getUsersService();
+    }
+
     if (!users) {
       res.status(404).send({
         status: "NOT FOUND",
@@ -159,4 +170,4 @@ const deleteUser = async (req, res) => {
   }
 };
 
-export default { addUser, getUserById, getAllUsers, updateUser, deleteUser };
+export { addUser, getUserById, getUsers, updateUser, deleteUser };

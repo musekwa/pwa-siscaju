@@ -1,17 +1,13 @@
 import router from "./index.js";
-import farmerController from "../controllers/farmer.controllers.js";
-import farmlandController from "../controllers/farmland.controllers.js";
-
-const {
+import {
   addFarmer,
-  getAllFarmers,
+  getFarmers,
   getFarmerById,
   updateFarmer,
   deleteFarmer,
-} = farmerController;
+} from "../controllers/farmer.controllers.js";
 
-
-router.route("/farmers").get(getAllFarmers).post(addFarmer);
+router.route("/farmers").get(getFarmers).post(addFarmer);
 
 router
   .route("/farmers/:farmerId")

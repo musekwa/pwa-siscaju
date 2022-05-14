@@ -105,12 +105,43 @@ const updateFarmlandService = async (farmerId, farmlandId, body) => {
   }
 };
 
-const deleteFarmlandService = () => {};
+const deleteFarmlandService = async (farmerId, farmlandId) => {
+  
+  try {
+    let deletionResult = await Farmland.deleteOne({
+      _id: ObjectId(farmlandId),
+      farmer: ObjectId(farmerId),
+    });
+  
+    if (!deletionResult) {
+      return {
+        status: 404,
+        message: "Pomar nao encontrado",
+      };
+    }
+    let farmlandOwner = await Farmer.findById(ObjectId(farmerId));
+    if (!farmlandOwner) {
+      return {
+        status: 404,
+        message: "Proprietario do pomar nao encontrado",
+      };
+    }
+    farmlandOwner.farmlands = farmlandOwner.farmlands.filter(
+      (id) => id !== ObjectId(farmlandId)
+    );
+    await farmlandOwner.save();
 
-export default {
+    return deletionResult;
+  } catch (error) {
+    return res.status(error?.status || 500).send({
+      status: "FAILED",
+      message: error?.message || error,
+    });
+  }
+};
+
+export {
   addFarmlandService,
-  // addFarmlandService,
-  //   getFarmlandByIdService,
   getFarmlandsService,
   getFarmlandsByFarmerIdService,
   getOneFarmlandByFarmerIdService,

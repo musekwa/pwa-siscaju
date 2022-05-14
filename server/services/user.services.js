@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 
 const ObjectId = mongoose.Types.ObjectId;
 
-const getAllUsersService = async () => {
+const getUsersService = async () => {
   try {
     let users = await User.find({});
     if (!users) {
@@ -21,6 +21,26 @@ const getAllUsersService = async () => {
       }
   }
 };
+
+const getUsersByRoleService = async (role)=>{
+
+  try {
+    let users = await User.find({ role: role });
+    console.log('users by role: ', users)
+    if (!users) {
+      return {
+        status: 404,
+        message: `Nenhum ${role} encontrado`,
+      };
+    }
+    return users;
+  } catch (error) {
+    throw {
+      status: 500,
+      message: error?.message || error,
+    };
+  }
+}
 
 
 const addUserService = async (user) => {
@@ -90,9 +110,10 @@ const deleteUserService = async (userId) => {
 };
 
 
-export default {
+export {
   addUserService,
-  getAllUsersService,
+  getUsersService,
+  getUsersByRoleService,
   getUserByIdService,
   updateUserService,
   deleteUserService,

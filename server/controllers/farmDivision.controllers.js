@@ -2,17 +2,15 @@ import FarmDivision from "../models/farmDivision.model.js";
 import _ from "lodash";
 import mongoose from "mongoose";
 import Farmland from "../models/farmland.model.js";
-import farmDivisionServices from "../services/farmDivision.services.js";
-
-const ObjectId = mongoose.Types.ObjectId;
-
-const {
+import {
   getFarmDivisionService,
   getOneFarmDivisionService,
   addFarmDivisionService,
   updateFarmDivisionService,
   deleteFarmDivisionService,
-} = farmDivisionServices;
+} from "../services/farmDivision.services.js";
+
+const ObjectId = mongoose.Types.ObjectId;
 
 // registering a new farmDivision by farmland's id
 // duplicates not being allowed
@@ -123,7 +121,7 @@ const deleteFarmDivision = async (req, res) => {
   }
 };
 
-export default {
+export {
   addFarmDivision,
   getFarmDivisions,
   updateFarmDivision,

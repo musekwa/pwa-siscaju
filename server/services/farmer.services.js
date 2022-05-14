@@ -3,7 +3,7 @@ import Farmer from "../models/farmer.model.js";
 
 const ObjectId = mongoose.Types.ObjectId;
 
-const getAllFarmersService = async () => {
+const getFarmersService = async () => {
   try {
     let farmers = await Farmer.find({});
     if (!farmers) {
@@ -92,11 +92,10 @@ const deleteFarmerService = async (farmerId) => {
 
 
 
-export default {
-  getAllFarmersService,
+export {
+  getFarmersService,
   addFarmerService,
   getFarmerByIdService,
   updateFarmerService,
   deleteFarmerService,
-  // addFarmlandByFarmerId,
 };

@@ -2,17 +2,16 @@ import _ from "lodash";
 import mongoose from "mongoose";
 import Farmer from "../models/farmer.model.js";
 import Farmland from "../models/farmland.model.js";
-import farmlandServices from "../services/farmland.services.js";
-
-const ObjectId = mongoose.Types.ObjectId;
-
-const {
+import {
   getFarmlandsByFarmerIdService,
   addFarmlandService,
   getFarmlandsService,
   getOneFarmlandByFarmerIdService,
   updateFarmlandService,
-} = farmlandServices;
+  deleteFarmlandService,
+} from "../services/farmland.services.js";
+
+const ObjectId = mongoose.Types.ObjectId;
 
 // create a new farmland by farmer (farmerId)
 const addFarmland = async (req, res) => {
@@ -128,43 +127,18 @@ const deleteFarmland = async (req, res) => {
   }
 
   try {
-    let foundFarmland = await Farmland.deleteOne({
-      _id: ObjectId(farmlandId),
-      farmer: ObjectId(farmerId),
-    });
-    console.log("found farmland:", foundFarmland);
-    if (!foundFarmland) {
-      res.status(404).send({
-        status: "NOT FOUND",
-        message: "Pomar nao encontrado",
-      });
-    }
-    let farmlandOwner = await Farmer.findById(ObjectId(farmerId));
-    if (!farmlandOwner) {
-      res.status(404).send({
-        status: "NOT FOUND",
-        message: "Proprietario do pomar nao encontrado",
-      });
-    }
-    farmlandOwner.farmlands = farmlandOwner.farmlands.filter(
-      (id) => id !== ObjectId(farmlandId)
-    );
-    await farmlandOwner.save();
-
-    res.status(204).send({
-      status: "OK",
-      message: "Pomar eliminado com sucesso!",
-    });
+    let deletionResult = await deleteFarmlandService(farmerId, farmlandId);
+    res.status(204).send(deletionResult);
     return ;
   } catch (error) {
-    return res.status(error?.status || 500).send({
+    res.status(error?.status || 500).send({
       status: "FAILED",
       message: error?.message || error,
     });
   }
 };
 
-export default {
+export {
   addFarmland,
   getFarmlands,
   updateFarmland,

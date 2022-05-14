@@ -1,13 +1,12 @@
 import config from "./config/config.js";
-import server from "./server/server.js";
-const {
+import {
   app,
   userRoutes,
   farmerRoutes,
   farmlandRoutes,
   farmDivisionRoutes,
   monitoringRoutes,
-} = server;
+}  from "./server/server.js";
 
 app.use(userRoutes);
 app.use(farmerRoutes);

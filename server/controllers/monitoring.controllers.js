@@ -6,6 +6,9 @@ const ObjectId = mongoose.Types.ObjectId;
 
 // register a new farmland
 const addMonitoring = async (req, res) => {
+  const {
+    body
+  } = req;
   const monitoring = new Monitoring(req.body);
   try {
     await monitoring.save();
@@ -18,7 +21,7 @@ const addMonitoring = async (req, res) => {
 };
 
 // list all registered farmlands
-const getAllMonitorings = async (req, res) => {
+const getMonitorings = async (req, res) => {
   let monitorings;
 
   try {
@@ -68,9 +71,9 @@ const deleteMonitoring = async (req, res) => {
   }
 };
 
-export default {
+export {
   addMonitoring,
-  getAllMonitorings,
+  getMonitorings,
   updateMonitoring,
   deleteMonitoring,
 };

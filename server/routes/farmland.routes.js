@@ -1,13 +1,10 @@
 import router from "./index.js";
-import farmlandController from "../controllers/farmland.controllers.js";
-
-const {
+import {
   getFarmlands,
   addFarmland,
   updateFarmland,
   deleteFarmland,
-} = farmlandController;
-
+} from "../controllers/farmland.controllers.js";
 
 router
   .route("/farmlands")

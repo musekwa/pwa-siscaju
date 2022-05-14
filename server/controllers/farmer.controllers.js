@@ -1,18 +1,16 @@
-import farmerService from "../services/farmer.services.js";
-import _ from "lodash";
-
-const {
-  getAllFarmersService,
+import {
+  getFarmersService,
   addFarmerService,
   getFarmerByIdService,
   updateFarmerService,
   deleteFarmerService,
-} = farmerService;
+} from "../services/farmer.services.js";
+import _ from "lodash";
 
 // list all registered farmers
-const getAllFarmers = async (req, res) => {
+const getFarmers = async (req, res) => {
   try {
-    let farmers = await getAllFarmersService();
+    let farmers = await getFarmersService();
     if (!farmers) {
       res.status(404).send({
         status: "NOT FOUND",
@@ -144,10 +142,10 @@ const deleteFarmer = async (req, res) => {
 };
 
 
-export default {
+export {
   addFarmer,
   getFarmerById,
-  getAllFarmers,
+  getFarmers,
   updateFarmer,
   deleteFarmer,
 };

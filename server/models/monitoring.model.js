@@ -79,15 +79,14 @@ const monitoringsSchema = mongoose.Schema(
       ],
     },
     harvest: [
-      // pera e castanha
       {
         productiveTrees: Number,
-        cashewAppleQuantity: Number,
-        cashewNutQuantity: Number,
+        appleQuantity: Number,
+        nutQuantity: Number,
         harvestedAt: Date,
       },
     ],
-    farmDivisions: {
+    farmDivision: {
       type: ObjectId,
       required: true,
       ref: "FarmDivision",

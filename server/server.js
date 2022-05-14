@@ -33,7 +33,7 @@ app.use(helmet());
 
 app.use(cors());
 
-export default {
+export {
   app,
   userRoutes,
   farmerRoutes,

@@ -103,7 +103,7 @@ const deleteFarmDivisionService = async (farmlandId, divisionId) => {
   }
 };
 
-export default {
+export {
   getFarmDivisionService,
   addFarmDivisionService,
   getOneFarmDivisionService,

@@ -7,6 +7,7 @@ import {
   addFarmlandService,
   getFarmlandsService,
   getOneFarmlandByFarmerIdService,
+  getFarmlandByFarmlandIdService,
   updateFarmlandService,
   deleteFarmlandService,
 } from "../services/farmland.services.js";
@@ -46,15 +47,17 @@ const getFarmlands = async (req, res) => {
   const {
     query: { farmerId, farmlandId },
   } = req;
- 
+
   try {
     let farmlands;
-    if (!farmerId && !farmlandId) {  // get all registered farmlands
+    if (!farmerId && !farmlandId) {
+      // get all registered farmlands
       farmlands = await getFarmlandsService();
-    } else if (farmerId && !farmlandId) { // get all farmlands belonging to the farmerId's owner
-      farmlands = await getFarmlandsByFarmerIdService(farmerId)
-    }
-    else if (farmerId && farmlandId){ // get one farmland by farmlandId and farmerId
+    } else if (farmerId && !farmlandId) {
+      // get all farmlands belonging to the farmerId's owner
+      farmlands = await getFarmlandsByFarmerIdService(farmerId);
+    } else if (farmerId && farmlandId) {
+      // get one farmland by farmlandId and farmerId
       farmlands = await getOneFarmlandByFarmerIdService(farmerId, farmlandId);
     }
     if (!farmlands) {
@@ -75,15 +78,29 @@ const getFarmlands = async (req, res) => {
   }
 };
 
+const getFarmlandById = async (req, res) => {
+  const {
+    params: { farmlandId },
+  } = req;
+  try {
+    let foundFarmland = await getFarmlandByFarmlandIdService(farmlandId);
+    res.status(200).send({ status: "OK", data: foundFarmland });
+  } catch (error) {
+    res.status(error?.status || 500).send({
+      status: "FAILED",
+      data: { error: error?.error || error },
+    });
+  }
+};
 
 // update an already-registered farmland
 const updateFarmland = async (req, res) => {
   const {
     body,
-    query: { farmerId, farmlandId },
+    params: { farmlandId },
   } = req;
 
-  if (!farmerId || !farmlandId) {
+  if (!farmlandId) {
     res.status(400).send({
       status: "FAILED",
       message: "Deve especificar ':farmerId' e ':farmlandId'",
@@ -91,11 +108,7 @@ const updateFarmland = async (req, res) => {
   }
 
   try {
-    let updatedFarmland = await updateFarmlandService(
-      farmerId,
-      farmlandId,
-      body
-    );
+    let updatedFarmland = await updateFarmlandService(farmlandId, body);
     if (!updatedFarmland) {
       res.status(404).send({
         status: "NOT FOUND",
@@ -115,7 +128,8 @@ const updateFarmland = async (req, res) => {
 // delete a registered farmland
 const deleteFarmland = async (req, res) => {
   const {
-    query: { farmerId, farmlandId },
+    params: { farmlandId },
+    query: { farmerId },
   } = req;
 
   if (!farmerId || !farmlandId) {
@@ -123,13 +137,15 @@ const deleteFarmland = async (req, res) => {
       status: "FAILED",
       message: "Deve especificar 'farmerId' e 'farmlandId'",
     });
-    return ;
+    return;
   }
 
   try {
     let deletionResult = await deleteFarmlandService(farmerId, farmlandId);
-    res.status(204).send(deletionResult);
-    return ;
+    res
+      .status(204)
+      .send({ status: "OK", message: "Pomar eliminado", data: deletionResult });
+    return;
   } catch (error) {
     res.status(error?.status || 500).send({
       status: "FAILED",
@@ -141,6 +157,7 @@ const deleteFarmland = async (req, res) => {
 export {
   addFarmland,
   getFarmlands,
+  getFarmlandById,
   updateFarmland,
   deleteFarmland,
 };

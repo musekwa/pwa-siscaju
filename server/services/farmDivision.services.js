@@ -4,7 +4,7 @@ import Farmland from "../models/farmland.model.js";
 
 const ObjectId = mongoose.Types.ObjectId;
 
-const getFarmDivisionService = async (farmlandId) => {
+const getDivisionsService = async (farmlandId) => {
   try {
     let divisions = await FarmDivision.find({ farmland: ObjectId(farmlandId) });
     if (!divisions) {
@@ -22,7 +22,7 @@ const getFarmDivisionService = async (farmlandId) => {
   }
 };
 
-const addFarmDivisionService = async (farmlandId, body) => {
+const addDivisionService = async (farmlandId, body) => {
   try {
     let farmland = await Farmland.findById(ObjectId(farmlandId));
     if (!farmland) {
@@ -31,10 +31,10 @@ const addFarmDivisionService = async (farmlandId, body) => {
         message: "Este pomar nao existe",
       };
     }
-    let farmDivision = new FarmDivision(body);
-    farmDivision.farmland = farmland;
+    let division = new FarmDivision(body);
+    division.farmland = farmland;
     farmland.farmDivisions.push(farmDivision);
-    await farmDivision.save();
+    await division.save();
     await farmland.save();
     return farmland;
   } catch (error) {
@@ -45,20 +45,20 @@ const addFarmDivisionService = async (farmlandId, body) => {
   }
 };
 
-const getOneFarmDivisionService = async (farmlandId, divisionId) => {
+const getOneDivisionService = async (farmlandId, divisionId) => {
   try {
-    let farmDivision = await FarmDivision.find({
+    let division = await FarmDivision.find({
       farmland: ObjectId(farmlandId),
       _id: ObjectId(divisionId),
     });
-    if (!farmDivision) {
+    if (!division) {
       return {
         status: 404,
         message: "Esta subdivisao de pomar nao existe",
       };
     }
 
-    return farmDivision;
+    return division;
   } catch (error) {
     throw {
       status: 500,
@@ -67,14 +67,14 @@ const getOneFarmDivisionService = async (farmlandId, divisionId) => {
   }
 };
 
-const updateFarmDivisionService = async (divisionId, body) => {
+const updateDivisionService = async (divisionId, body) => {
   try {
-    let updatedFarmDivision = await FarmDivision.findOneAndUpdate(
+    let updatedDivision = await FarmDivision.findOneAndUpdate(
       { _id: ObjectId(divisionId) },
       body,
       { runValidators: true, new: true }
     );
-    return updatedFarmDivision;
+    return updatedDivision;
   } catch (error) {
     throw {
       status: 500,
@@ -83,7 +83,7 @@ const updateFarmDivisionService = async (divisionId, body) => {
   }
 };
 
-const deleteFarmDivisionService = async (farmlandId, divisionId) => {
+const deleteDivisionService = async (farmlandId, divisionId) => {
   try {
     await FarmDivision.deleteOne({
       _id: ObjectId(divisionId),
@@ -104,9 +104,9 @@ const deleteFarmDivisionService = async (farmlandId, divisionId) => {
 };
 
 export {
-  getFarmDivisionService,
-  addFarmDivisionService,
-  getOneFarmDivisionService,
-  updateFarmDivisionService,
-  deleteFarmDivisionService,
+  getDivisionsService,
+  addDivisionService,
+  getOneDivisionService,
+  updateDivisionService,
+  deleteDivisionService,
 };

@@ -1,18 +1,18 @@
 import express from "express";
 import {
-  getFarmDivisions,
-  addFarmDivision,
-  updateFarmDivision,
-  deleteFarmDivision,
+  getDivisions,
+  addDivision,
+  updateDivision,
+  deleteDivision,
 } from "../controllers/farmDivision.controllers.js";
 
 const router = express.Router();
 
 router
   .route("/farmlands/:farmlandId/divisions")
-  .get(getFarmDivisions)
-  .post(addFarmDivision)
-  .patch(updateFarmDivision)
-  .delete(deleteFarmDivision);
+  .get(getDivisions)
+  .post(addDivision)
+  .patch(updateDivision)
+  .delete(deleteDivision);
 
 export default router;

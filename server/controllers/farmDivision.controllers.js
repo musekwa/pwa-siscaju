@@ -3,18 +3,18 @@ import _ from "lodash";
 import mongoose from "mongoose";
 import Farmland from "../models/farmland.model.js";
 import {
-  getFarmDivisionService,
-  getOneFarmDivisionService,
-  addFarmDivisionService,
-  updateFarmDivisionService,
-  deleteFarmDivisionService,
+  getDivisionsService,
+  getOneDivisionService,
+  addDivisionService,
+  updateDivisionService,
+  deleteDivisionService,
 } from "../services/farmDivision.services.js";
 
 const ObjectId = mongoose.Types.ObjectId;
 
 // registering a new farmDivision by farmland's id
 // duplicates not being allowed
-const addFarmDivision = async (req, res) => {
+const addDivision = async (req, res) => {
   const {
     body,
     params: { farmlandId },
@@ -29,7 +29,7 @@ const addFarmDivision = async (req, res) => {
       return;
     }
 
-    let farmland = await addFarmDivisionService(farmlandId, body);
+    let farmland = await addDivisionService(farmlandId, body);
     res.status(200).send({
       status: "OK",
       data: farmland,
@@ -45,24 +45,24 @@ const addFarmDivision = async (req, res) => {
 };
 
 // get farmland divisions by farmland's id
-const getFarmDivisions = async (req, res) => {
+const getDivisions = async (req, res) => {
   const {
     params: { farmlandId },
     query: { divisionId },
   } = req;
   try {
-    let foundFarmDivisions;
+    let foundDivisions;
     if (farmlandId && !divisionId) {
-      foundFarmDivisions = await getFarmDivisionService(farmlandId);
+      foundDivisions = await getDivisionsService(farmlandId);
     } else if (farmlandId && divisionId) {
-      foundFarmDivisions = await getOneFarmDivisionService(
+      foundDivisions = await getOneDivisionService(
         farmlandId,
         divisionId
       );
     }
     res.status(200).send({
       status: "OK",
-      data: foundFarmDivisions,
+      data: foundDivisions,
     });
     return;
   } catch (error) {
@@ -74,7 +74,7 @@ const getFarmDivisions = async (req, res) => {
 };
 
 // update an already-registered farmDivision
-const updateFarmDivision = async (req, res) => {
+const updateDivision = async (req, res) => {
   const {
     body,
     params: { farmlandId },
@@ -82,13 +82,13 @@ const updateFarmDivision = async (req, res) => {
   } = req;
   if (farmlandId && divisionId) {
     try {
-      let updatedFarmDivision = await updateFarmDivisionService(
+      let updatedDivision = await updateDivisionService(
         divisionId,
         body
       );
       res.status(200).send({
         status: "OK",
-        data: updatedFarmDivision,
+        data: updatedDivision,
       });
     } catch (error) {
       res.status(error?.status || 500).send({
@@ -105,13 +105,13 @@ const updateFarmDivision = async (req, res) => {
 };
 
 // delete a registered farmDivision
-const deleteFarmDivision = async (req, res) => {
+const deleteDivision = async (req, res) => {
   const {
     params: { farmlandId },
     query: { divisionId },
   } = req;
   try {
-    let deletionResult = await deleteFarmDivisionService(farmlandId, divisionId);
+    let deletionResult = await deleteDivisionService(farmlandId, divisionId);
     return res.status(200).json(deletionResult);
   } catch (error) {
     res.status(error?.status || 500).send({
@@ -122,8 +122,8 @@ const deleteFarmDivision = async (req, res) => {
 };
 
 export {
-  addFarmDivision,
-  getFarmDivisions,
-  updateFarmDivision,
-  deleteFarmDivision,
+  addDivision,
+  getDivisions,
+  updateDivision,
+  deleteDivision,
 };

@@ -8,7 +8,7 @@ router
 
 router
   .route("/monitorings/:monitoringId")
-  .put(updateMonitoring)
+  .patch(updateMonitoring)
   .delete(deleteMonitoring);
 
 export default router;

@@ -1,22 +1,20 @@
 import _ from "lodash";
 import mongoose from "mongoose";
-import Monitoring from "../models/monitoring.model.js";
+import { addMonitoringService } from "../services/monitoring.services.js";
 
 const ObjectId = mongoose.Types.ObjectId;
 
 // register a new farmland
 const addMonitoring = async (req, res) => {
-  const {
-    body
-  } = req;
-  const monitoring = new Monitoring(req.body);
+  const { body, params: { farmlandId } } = req;
+  
   try {
-    await monitoring.save();
-    return res.status(200).json(monitoring);
-  } catch (err) {
-    return res.status(400).json({
-      message: err.message,
-    });
+    let savedMonitoring = await addMonitoringService(farmlandId, body);
+    res.status(200).send({ status: "OK", data: savedMonitoring });
+  } catch (error) {
+    res
+      .status(error?.status || 500)
+      .send({ status: "FAILED", data: { error: error?.error || error } });
   }
 };
 
@@ -71,9 +69,4 @@ const deleteMonitoring = async (req, res) => {
   }
 };
 
-export {
-  addMonitoring,
-  getMonitorings,
-  updateMonitoring,
-  deleteMonitoring,
-};
+export { addMonitoring, getMonitorings, updateMonitoring, deleteMonitoring };

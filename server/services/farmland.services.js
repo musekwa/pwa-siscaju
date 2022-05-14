@@ -77,42 +77,59 @@ const getOneFarmlandByFarmerIdService = async (farmerId, farmlandId) => {
   } catch (error) {
     throw {
       status: "FAILED",
-      message: error?.message || error
+      message: error?.message || error,
     };
   }
 };
 
-const updateFarmlandService = async (farmerId, farmlandId, body) => {
-  try{
-      let updatedFarmland = await Farmland.findOneAndUpdate(
-      { _id: ObjectId(farmlandId), farmer: ObjectId(farmerId) },
+const getFarmlandByFarmlandIdService = async (farmlandId) => {
+  try {
+    let foundFarmland = await Farmland.findById(ObjectId(farmlandId));
+    if (!foundFarmland) {
+      return {
+        status: 404,
+        message: "Pomar nao encontrado!",
+      };
+    }
+    return foundFarmland;
+  } catch (error) {
+    throw {
+      status: "FAILED",
+      message: error?.message || error,
+    };
+  }
+};
+
+const updateFarmlandService = async (farmlandId, body) => {
+  try {
+    let updatedFarmland = await Farmland.findOneAndUpdate(
+      { _id: ObjectId(farmlandId) },
       body,
       { runValidators: true, new: true }
     );
     if (!updatedFarmland) {
       return {
         status: 404,
-        message: "Pomar nao encontrado"
-      }
+        message: "Pomar nao encontrado",
+      };
     }
 
     return updatedFarmland;
   } catch (error) {
     throw {
-      status: "FAILED", 
+      status: "FAILED",
       message: error?.message || error,
     };
   }
 };
 
 const deleteFarmlandService = async (farmerId, farmlandId) => {
-  
   try {
     let deletionResult = await Farmland.deleteOne({
       _id: ObjectId(farmlandId),
       farmer: ObjectId(farmerId),
     });
-  
+
     if (!deletionResult) {
       return {
         status: 404,
@@ -145,6 +162,7 @@ export {
   getFarmlandsService,
   getFarmlandsByFarmerIdService,
   getOneFarmlandByFarmerIdService,
+  getFarmlandByFarmlandIdService,
   updateFarmlandService,
   deleteFarmlandService,
 };

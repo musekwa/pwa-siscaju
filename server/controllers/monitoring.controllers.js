@@ -1,16 +1,26 @@
 import _ from "lodash";
 import mongoose from "mongoose";
-import { addMonitoringService } from "../services/monitoring.services.js";
+import { createOrUpdateMonitoringService } from "../services/monitoring.services.js";
 
 const ObjectId = mongoose.Types.ObjectId;
 
 // register a new farmland
 const addMonitoring = async (req, res) => {
-  const { body, params: { farmlandId } } = req;
-  
+  const {
+    body,
+    query: { divisionId, year },
+  } = req;
+
+  if (!divisionId || !year) {
+    res.status(400).send({
+      status: "FAILED",
+      message: "Indique 'divisionId' e 'year'!",
+    });
+  }
+  let query = { year: Number(year), division: ObjectId(divisionId) }
   try {
-    let savedMonitoring = await addMonitoringService(farmlandId, body);
-    res.status(200).send({ status: "OK", data: savedMonitoring });
+    let updatedMonitoring = await createOrUpdateMonitoringService(query, body);
+    res.status(200).send({ status: "OK", data: updatedMonitoring });
   } catch (error) {
     res
       .status(error?.status || 500)

@@ -1,94 +1,63 @@
 import mongoose from "mongoose";
 
 const ObjectId = mongoose.Types.ObjectId;
+var Schema = mongoose.Schema;
 
 const monitoringsSchema = mongoose.Schema(
   {
-    diseases: [
-      {
-        name: { type: String, trim: true },
-        trees: {
-          higherSeverity: Number,
-          highSeverity: Number,
-          averageSeverity: Number,
-          lowSeverity: Number,
-          noSeverity: Number,
-        },
-        controlledAt: {
-          type: Date,
-          default: Date.now,
-        },
-      },
-    ],
-    plagues: [
-      {
-        name: { type: String, trim: true },
-        trees: {
-          higherSeverity: Number,
-          highSeverity: Number,
-          averageSeverity: Number,
-          lowSeverity: Number,
-          noSeverity: Number,
-        },
-        controlledAt: {
-          type: Date,
-          default: Date.now,
-        },
-      },
-    ],
-    weeding: {
-      cleanTrees: Number,
-      weededAt: {
-        type: Date,
+    year: {
+      type: Number,
+      default: function () {
+        return new Date().getFullYear();
       },
     },
+    disease: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Disease",
+      },
+    ],
+    plague: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Plague",
+      },
+    ],
+    weeding: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Weeding",
+      },
+    ],
     pruning: [
       {
-        pruningType: {
-          type: String,
-          enum: {
-            values: [
-              "Poda de formação",
-              "Poda de sanitação",
-              "Poda de manutenção",
-              "Poda de rejuvenescimento",
-            ],
-            message: ["Este tipo de poda não é recomendado"],
-          },
-          prunedTrees: Number,
-          prunedAt: { type: Date },
-        },
+        type: Schema.Types.ObjectId,
+        ref: "Pruning",
       },
     ],
-    pesticides: {
-      insecticides: [
-        // plagues
-        {
-          name: { type: String, trim: true },
-          treatedTrees: Number,
-          appliedAt: Date,
-        },
-      ],
-      fungicides: [
-        // diseases
-        {
-          name: { type: String, trim: true },
-          treatedTrees: Number,
-          appliedAt: Date,
-        },
-      ],
-    },
+
+    insecticide: [
+      // against plagues
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Insecticide",
+      },
+    ],
+    fungicide: [
+      // against diseases
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Fungicide",
+      },
+    ],
     harvest: [
       {
-        productiveTrees: Number,
-        appleQuantity: Number,
-        nutQuantity: Number,
-        harvestedAt: Date,
+        type: Schema.Types.ObjectId,
+        ref: "Harvest",
       },
     ],
-    farmDivision: {
+    division: {
       type: ObjectId,
-      required: true,
       ref: "FarmDivision",
     },
     createdAt: {

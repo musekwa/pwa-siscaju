@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import validator from "validator";
+import bcrypt from 'bcryptjs';
 
 var Schema = mongoose.Schema;
 
@@ -115,6 +116,45 @@ usersSchema.pre("save", function (next) {
   }
   next();
 });
+
+// encrypting user's password
+usersSchema.pre("save", function(next){
+  const user = this;
+  if (this.isModified("password") || this.isNew){
+    bcrypt.genSalt(10, function(saltError, salt){
+      if (saltError) {
+        return next(saltError)
+      }
+      else {
+        bcrypt.hash(user.password, salt, function(hashError, hash){
+          if (hashError){
+            return next(hashError);
+          }
+          user.password = hash;
+          next();
+        })
+      }
+    })
+  }
+  else {
+    return next();
+  }
+})
+
+// authenticating user 
+usersSchema.statics.authenticate = async function(email, password){
+  let user = await User.findOne({ email }) 
+  if (!user){
+    return ;
+  }
+  let result = await bcrypt.compare(password, user.password)
+  if (result){
+    return user;
+  }
+  else{
+    return ;
+  }
+}
 
 // validating the fullname
 usersSchema.path("fullname").validate(function (value) {

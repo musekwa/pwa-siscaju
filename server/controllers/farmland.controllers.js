@@ -22,7 +22,7 @@ const addFarmland = async (req, res) => {
   } = req;
 
   if (!farmerId || !body) {
-    res.status(400).send({
+    return res.status(400).send({
       status: "FAILED",
       message:
         "Algo foi esquecido: ou o parametro 'farmerId' ou dados do pomar (body)",
@@ -30,12 +30,12 @@ const addFarmland = async (req, res) => {
   }
   try {
     let savedFarmland = await addFarmlandService(farmerId, body);
-    res.status(201).send({
+    return res.status(201).send({
       status: "OK",
       data: { farmer: savedFarmland.farmer, farmland: savedFarmland.farmland },
     });
   } catch (error) {
-    res.status(error?.status || 500).send({
+    return res.status(error?.status || 500).send({
       status: "FAILED",
       data: { error: error?.error || error },
     });
@@ -61,7 +61,7 @@ const getFarmlands = async (req, res) => {
       farmlands = await getOneFarmlandByFarmerIdService(farmerId, farmlandId);
     }
     if (!farmlands) {
-      res.status(404).send({
+      return res.status(404).send({
         status: "NOT FOUND",
         message: "Pomares nao encontrados!",
       });
@@ -84,9 +84,9 @@ const getFarmlandById = async (req, res) => {
   } = req;
   try {
     let foundFarmland = await getFarmlandByFarmlandIdService(farmlandId);
-    res.status(200).send({ status: "OK", data: foundFarmland });
+    return res.status(200).send({ status: "OK", data: foundFarmland });
   } catch (error) {
-    res.status(error?.status || 500).send({
+    return res.status(error?.status || 500).send({
       status: "FAILED",
       data: { error: error?.error || error },
     });
@@ -101,7 +101,7 @@ const updateFarmland = async (req, res) => {
   } = req;
 
   if (!farmlandId) {
-    res.status(400).send({
+    return res.status(400).send({
       status: "FAILED",
       message: "Deve especificar ':farmerId' e ':farmlandId'",
     });
@@ -110,13 +110,13 @@ const updateFarmland = async (req, res) => {
   try {
     let updatedFarmland = await updateFarmlandService(farmlandId, body);
     if (!updatedFarmland) {
-      res.status(404).send({
+      return res.status(404).send({
         status: "NOT FOUND",
         message: "Pomar nao econtrado",
       });
     }
 
-    res.status(200).send({ status: "OK", data: updatedFarmland });
+    return res.status(200).send({ status: "OK", data: updatedFarmland });
   } catch (error) {
     return res.status(error?.status || 500).send({
       status: "FAILED",
@@ -133,21 +133,19 @@ const deleteFarmland = async (req, res) => {
   } = req;
 
   if (!farmerId || !farmlandId) {
-    res.status(400).send({
+    return res.status(400).send({
       status: "FAILED",
       message: "Deve especificar 'farmerId' e 'farmlandId'",
     });
-    return;
   }
 
   try {
     let deletionResult = await deleteFarmlandService(farmerId, farmlandId);
-    res
+    return res
       .status(204)
       .send({ status: "OK", message: "Pomar eliminado", data: deletionResult });
-    return;
   } catch (error) {
-    res.status(error?.status || 500).send({
+    return res.status(error?.status || 500).send({
       status: "FAILED",
       message: error?.message || error,
     });

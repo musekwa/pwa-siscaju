@@ -22,25 +22,22 @@ const addDivision = async (req, res) => {
 
   try {
     if (!farmlandId) {
-      res.status(400).send({
+      return res.status(400).send({
         status: "FAILED",
         message: "Deve especificar o 'farmlandId' do pomar",
       });
-      return;
     }
 
     let farmland = await addDivisionService(farmlandId, body);
-    res.status(200).send({
+    return res.status(200).send({
       status: "OK",
       data: farmland,
     });
-    return;
   } catch (error) {
-    res.status(error?.status || 500).send({
+    return res.status(error?.status || 500).send({
       status: "FAILED",
       data: { error: error?.error || error },
     });
-    return;
   }
 };
 
@@ -60,13 +57,12 @@ const getDivisions = async (req, res) => {
         divisionId
       );
     }
-    res.status(200).send({
+    return res.status(200).send({
       status: "OK",
       data: foundDivisions,
     });
-    return;
   } catch (error) {
-    res.status(error?.status || 500).send({
+    return res.status(error?.status || 500).send({
       status: "FAILED",
       data: { error: error?.error || error },
     });
@@ -86,18 +82,18 @@ const updateDivision = async (req, res) => {
         divisionId,
         body
       );
-      res.status(200).send({
+      return res.status(200).send({
         status: "OK",
         data: updatedDivision,
       });
     } catch (error) {
-      res.status(error?.status || 500).send({
+      return res.status(error?.status || 500).send({
         status: "FAILED",
         data: { error: error?.error || error },
       });
     }
   } else {
-    res.status(400).send({
+    return res.status(400).send({
       status: "FAILED",
       message: "Deve especificar 'farmlandId' e 'divisionId'",
     });
@@ -112,9 +108,9 @@ const deleteDivision = async (req, res) => {
   } = req;
   try {
     let deletionResult = await deleteDivisionService(farmlandId, divisionId);
-    return res.status(200).json(deletionResult);
+    return res.status(204).send({ status: "OK", message: "Subdivisao liminada com sucesso" });
   } catch (error) {
-    res.status(error?.status || 500).send({
+    return res.status(error?.status || 500).send({
       status: "FAILED",
       data: { error: error?.error || error },
     });

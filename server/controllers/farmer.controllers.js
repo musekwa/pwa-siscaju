@@ -12,17 +12,17 @@ const getFarmers = async (req, res) => {
   try {
     let farmers = await getFarmersService();
     if (!farmers) {
-      res.status(404).send({
+      return res.status(404).send({
         status: "NOT FOUND",
         message: "Produtores nao encontrados",
       });
     }
-    res.status(200).send({
+    return res.status(200).send({
       status: "OK",
       data: farmers,
     });
   } catch (error) {
-    res.status(error?.status || 500).send({
+    return res.status(error?.status || 500).send({
       status: "FAILED",
       data: { error: error?.error || error },
     });
@@ -34,7 +34,7 @@ const getFarmers = async (req, res) => {
 const addFarmer = async (req, res) => {
   const { body } = req;
   if (!body.fullname || !body.birthDate || !body.birthPlace) {
-    res.status(400).send({
+    return res.status(400).send({
       status: "FAILED",
       message:
         "Os campos de dados: fullname, birthDate e birthPlace sao obrigatorio",
@@ -43,12 +43,12 @@ const addFarmer = async (req, res) => {
 
   try {
     let savedFarmer = await addFarmerService(body);
-    res.status(201).send({
+    return res.status(201).send({
       status: "OK",
       data: savedFarmer,
     });
   } catch (error) {
-    res.status(error?.status || 500).send({
+    return res.status(error?.status || 500).send({
       status: "FAILED",
       data: { error: error?.error || error },
     });
@@ -61,7 +61,7 @@ const getFarmerById = async (req, res) => {
     params: { farmerId },
   } = req;
   if (!farmerId) {
-    res.status(400).send({
+    return res.status(400).send({
       status: "FAILED",
       data: { error: "O parametro ':farmerId' nao pode ser vazio" },
     });
@@ -69,17 +69,17 @@ const getFarmerById = async (req, res) => {
   try {
     const foundFarmer = await getFarmerByIdService(farmerId);
     if (!foundFarmer) {
-      res.status(404).send({
+      return res.status(404).send({
         status: "NOT FOUND",
         message: "Produtor nao encontrado",
       });
     }
-    res.status(200).send({
+    return res.status(200).send({
       status: "OK",
       data: foundFarmer,
     });
   } catch (error) {
-    res.status(error?.status || 500).send({
+    return res.status(error?.status || 500).send({
       status: "FAILED",
       data: { error: error?.error || error },
     });
@@ -93,7 +93,7 @@ const updateFarmer = async (req, res) => {
     params: { farmerId },
   } = req;
   if (!farmerId) {
-    res.status(400).send({
+    return res.status(400).send({
       status: "FAILED",
       message: "O parametro ':farmerId' nao pode ser vazio",
     });
@@ -102,17 +102,17 @@ const updateFarmer = async (req, res) => {
   try {
     let updatedFarmer = await updateFarmerService(farmerId, body);
     if (!updatedFarmer) {
-      res.status(404).send({
+      return res.status(404).send({
         status: "NOT FOUND",
         message: "Produtor nao encontrados",
       });
     }
-    res.status(200).send({
+    return res.status(200).send({
       status: "OK",
       data: updatedFarmer,
     });
   } catch (error) {
-    res.status(error?.error || 500).send({
+    return res.status(error?.error || 500).send({
       status: "FAILED",
       data: { error: error?.error || error },
     });
@@ -125,16 +125,16 @@ const deleteFarmer = async (req, res) => {
     params: { farmerId },
   } = req;
   if (!farmerId) {
-    res.status(400).send({
+    return res.status(400).send({
       status: "FAILED",
       message: "O parametro ':farmerId' nao pode ser vazio",
     });
   }
   try {
     let deletionResult = await deleteFarmerService(farmerId);
-    res.status(204).send(deletionResult);
+    return res.status(204).send(deletionResult);
   } catch (error) {
-    res.status(error?.status || 500).send({
+    return res.status(error?.status || 500).send({
       status: "FAILED",
       data: { error: error?.error || error },
     });

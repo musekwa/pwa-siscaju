@@ -7,15 +7,13 @@ const ObjectId = mongoose.Types.ObjectId;
 const loginService = async (body)=>{
 
   try {
-
-    let user = await User.findOne({ email: body.email }, "email password salt fullname");
+    let user = await User.authenticate(body.email, body.password)
     if (!user){
       return {
-        status: 404, message: "Utilizador nao encontrado"
+        status: "Ou utilizador nao existe ou password nao corresponde"
       }
     }
-    return user;
-    
+    return user
   } catch (error) {
     throw {
       status: 500, message: error?.message || error

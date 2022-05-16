@@ -13,25 +13,24 @@ import expressValidator from "express-validator";
 const { body, validationResult } = expressValidator;
 
 // login
-const login = async (req, res)=>{
-
+const login = async (req, res, next) => {
   const { body } = req;
 
-  if (!body.email || !body.password){
-    res.status(400).send({
-      status: "FAILED", message: "Deve especificar 'email' e 'password'!"
-    })
+  if (!body.email || !body.password) {
+    return res.status(400).send({
+      status: "FAILED",
+      message: "Deve especificar 'email' e 'password'!",
+    });
   }
 
   try {
     let user = await loginService(body);
-    res.status(201).send({
-      status: "OK", data: user
-    })
-  } catch (error) {
-    
-  }
-}
+    return res.status(201).send({
+      status: "OK",
+      data: user,
+    });
+  } catch (error) {}
+};
 
 // get all registered users
 const getUsers = async (req, res) => {
@@ -43,23 +42,22 @@ const getUsers = async (req, res) => {
     let users;
     if (role) {
       users = await getUsersByRoleService(role);
-    }
-    else{
+    } else {
       users = await getUsersService();
     }
 
     if (!users) {
-      res.status(404).send({
+      return res.status(404).send({
         status: "NOT FOUND",
         message: "Utilizadores nao encontrados",
       });
     }
-    res.status(200).send({
+    return res.status(200).send({
       status: "OK",
       data: users,
     });
   } catch (error) {
-    res.status(error?.status || 500).send({
+    return res.status(error?.status || 500).send({
       status: "FAILED",
       data: { error: error?.message || error },
     });
@@ -69,8 +67,8 @@ const getUsers = async (req, res) => {
 // register a new user
 const addUser = async (req, res) => {
   const { body } = req;
-  if (!body.fullname || !body.email || !body.hashedPassword || !body.role) {
-    res.status(400).send({
+  if (!body.fullname || !body.email || !body.password || !body.role) {
+    return res.status(400).send({
       status: "FAILED",
       data: {
         error:
@@ -81,12 +79,12 @@ const addUser = async (req, res) => {
 
   try {
     let savedUser = await addUserService(body);
-    res.status(201).send({
+    return res.status(201).send({
       status: "OK",
       data: savedUser,
     });
   } catch (error) {
-    res.status(error?.status || 500).send({
+    return res.status(error?.status || 500).send({
       status: "FAILED",
       data: { error: error?.message || error },
     });

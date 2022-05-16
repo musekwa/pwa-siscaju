@@ -11,10 +11,9 @@ import Harvest from "../models/harvest.model.js";
 
 const ObjectId = mongoose.Types.ObjectId;
 
-
 // register the current state of the cashew trees in terms of:
 // the following query values: 'disease'; 'plague', 'pruning'
-// 'weeding', 'insecticide applied', 'fungicide applied', and 
+// 'weeding', 'insecticide applied', 'fungicide applied', and
 // 'harvest' in the current year.
 const inspectDivision = async (query, body) => {
   let division = await FarmDivision.findById(ObjectId(query.divisionId));
@@ -33,7 +32,7 @@ const inspectDivision = async (query, body) => {
   );
 
   let savedInspection;
-  switch (query.inspect) {
+  switch (query.variable) {
     case "disease": // for query value = disease
       let newDisease = new Disease(body);
       savedInspection = await inspectDisease(division, monitoring, newDisease);
@@ -58,7 +57,7 @@ const inspectDivision = async (query, body) => {
         newInsecticide
       );
       break;
-    case "fungicide":  // for query value = fungicide
+    case "fungicide": // for query value = fungicide
       let newFungicide = new Fungicide(body);
       savedInspection = await inspectFungicide(
         division,
@@ -66,7 +65,7 @@ const inspectDivision = async (query, body) => {
         newFungicide
       );
       break;
-    case "harvest":  // for query value = harvest
+    case "harvest": // for query value = harvest
       let newHarvest = new Harvest(body);
       savedInspection = await inspectHarvest(division, monitoring, newHarvest);
       break;
@@ -77,6 +76,94 @@ const inspectDivision = async (query, body) => {
       };
   }
   return savedInspection;
+};
+
+const getMonitoringService = async (divisionId) => {
+  try {
+    let monitoring = await Monitoring.find({
+      division: ObjectId(divisionId),
+    }).populate("disease plague weeding pruning insecticide fungicide harvest");
+    if (!monitoring) {
+      return {
+        status: 404,
+        message: "Monitoria desta subdivisao nao encontrada!",
+      };
+    }
+    return monitoring;
+  } catch (error) {
+    throw {
+      status: 500,
+      message: error?.message || error,
+    };
+  }
+};
+
+const getMonitoringByYearService = async (divisionId, year) => {
+  try {
+    let monitoring = await Monitoring.find({
+      division: ObjectId(divisionId),
+      year: year,
+    }).populate("disease plague pruning weeding insecticide fungicide harvest");
+
+    if (!monitoring) {
+      return {
+        status: 404,
+        message: "Monitoring desta subdivisao nao encontrada!",
+      };
+    }
+    return monitoring;
+  } catch (error) {
+    throw {
+      status: 500,
+      message: error?.message || error,
+    };
+  }
+};
+
+const getMonitoringByVariabilityService = async (divisionId, variable) => {
+  try {
+    let monitoring = await Monitoring.find({
+      division: ObjectId(divisionId),
+    }).populate(`${variable}`);
+    if (!monitoring) {
+      return {
+        status: 404,
+        message: "Esta variabilidade nesta subdivisao nao encontrada!",
+      };
+    }
+    return monitoring;
+  } catch (error) {
+    throw {
+      status: 500,
+      message: error?.message || error,
+    };
+  }
+};
+
+const getMonitoringByVariablityAndYearService = async (
+  divisionId,
+  variable,
+  year
+) => {
+  try {
+    let monitoring = await Monitoring.find({
+      division: ObjectId(divisionId),
+      year,
+    }).populate(`${variable}`);
+    if (!monitoring) {
+      return {
+        status: 404,
+        message:
+          "Esta variabilidade nesta subdivisao neste ano nao encontrada!",
+      };
+    }
+    return monitoring;
+  } catch (error) {
+    throw {
+      status: 500,
+      message: error?.message || error,
+    };
+  }
 };
 
 // register the actual state of the cashew trees in a farm division
@@ -114,7 +201,6 @@ const inspectPlague = async (division, monitoring, newPlague) => {
     };
   }
 };
-
 
 // register the actual state of the cashew trees in a farm division
 // in terms of the pruning activities in the current year
@@ -201,4 +287,10 @@ const inspectHarvest = async (division, monitoring, newHarvest) => {
     };
   }
 };
-export { inspectDivision };
+export {
+  inspectDivision,
+  getMonitoringService,
+  getMonitoringByYearService,
+  getMonitoringByVariabilityService,
+  getMonitoringByVariablityAndYearService,
+};

@@ -1,4 +1,5 @@
 import {
+  loginService,
   getUsersService,
   getUsersByRoleService,
   addUserService,
@@ -11,14 +12,26 @@ import expressValidator from "express-validator";
 
 const { body, validationResult } = expressValidator;
 
-/**
- * user coontrollers:
- * 1. addUser: registers a new user
- * 2. getUserById:
- * 4. getUsers: list all the users
- * 4. updateUser: update some user's fields
- * 5. deleteUser: delete the user
- */
+// login
+const login = async (req, res)=>{
+
+  const { body } = req;
+
+  if (!body.email || !body.password){
+    res.status(400).send({
+      status: "FAILED", message: "Deve especificar 'email' e 'password'!"
+    })
+  }
+
+  try {
+    let user = await loginService(body);
+    res.status(201).send({
+      status: "OK", data: user
+    })
+  } catch (error) {
+    
+  }
+}
 
 // get all registered users
 const getUsers = async (req, res) => {
@@ -170,4 +183,4 @@ const deleteUser = async (req, res) => {
   }
 };
 
-export { addUser, getUserById, getUsers, updateUser, deleteUser };
+export { login, addUser, getUserById, getUsers, updateUser, deleteUser };

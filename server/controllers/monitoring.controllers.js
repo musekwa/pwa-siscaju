@@ -22,7 +22,7 @@ const addMonitoringByVariability = async (req, res) => {
   }
   try {
     let savedInspection = await inspectDivision(query, body);
-    res.status(200).send({ status: "OK", data: savedInspection });
+    res.status(201).send({ status: "OK", data: savedInspection });
   } catch (error) {
     res
       .status(error?.status || 500)

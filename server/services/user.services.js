@@ -4,6 +4,25 @@ import mongoose from "mongoose";
 
 const ObjectId = mongoose.Types.ObjectId;
 
+const loginService = async (body)=>{
+
+  try {
+
+    let user = await User.findOne({ email: body.email }, "email password salt fullname");
+    if (!user){
+      return {
+        status: 404, message: "Utilizador nao encontrado"
+      }
+    }
+    return user;
+    
+  } catch (error) {
+    throw {
+      status: 500, message: error?.message || error
+    }
+  }
+}
+
 const getUsersService = async () => {
   try {
     let users = await User.find({});
@@ -111,6 +130,7 @@ const deleteUserService = async (userId) => {
 
 
 export {
+  loginService,
   addUserService,
   getUsersService,
   getUsersByRoleService,

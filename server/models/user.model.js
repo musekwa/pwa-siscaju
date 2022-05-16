@@ -19,7 +19,7 @@ var usersSchema = new Schema(
       unique: [true, "Este endereço email {VALUE} já existe."],
       validate: [validator.isEmail, "O endereço email é invalido."],
     },
-    hashedPassword: {
+    password: {
       type: String,
       required: [true, "Deve fornecer o seu password."],
     },

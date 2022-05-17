@@ -14,9 +14,14 @@ const { body, validationResult } = expressValidator;
 
 // login
 const login = async (req, res, next) => {
-  const { body } = req;
+  const { email, password } = req.body;
 
-  if (!body.email || !body.password) {
+  const errors  = validationResult(req);
+  if (!errors.isEmpty()){
+    return res.status(400).send({ errors: errors?.array()})
+  }
+  
+  if (!email || !password) {
     return res.status(400).send({
       status: "FAILED",
       message: "Deve especificar 'email' e 'password'!",
@@ -24,12 +29,18 @@ const login = async (req, res, next) => {
   }
 
   try {
-    let user = await loginService(body);
-    return res.status(201).send({
+    let user = await loginService({ email, password });
+    res.status(201).send({
       status: "OK",
       data: user,
     });
-  } catch (error) {}
+    next()
+  } catch (error) {
+    return res.status(error?.status || 500).send({
+      status: "FAILED",
+      data: { error: error?.error || error },
+    });
+  }
 };
 
 // get all registered users

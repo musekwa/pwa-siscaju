@@ -15,6 +15,7 @@ router
   .patch(updateFarmer)
   .delete(deleteFarmer);
 
+router.route
 
 
 export default router;

@@ -5,9 +5,10 @@ import mongoose from "mongoose";
 const ObjectId = mongoose.Types.ObjectId;
 
 const loginService = async (body)=>{
+  const { email, password } = body;
 
   try {
-    let user = await User.authenticate(body.email, body.password)
+    let user = await User.authenticate(email, password)
     if (!user){
       return {
         status: "Ou utilizador nao existe ou password nao corresponde"

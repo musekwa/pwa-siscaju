@@ -7,8 +7,9 @@ import {
   updateUser,
   deleteUser,
 } from "../controllers/user.controllers.js";
+import { body } from 'express-validator'
 
-router.route("/login").post(login);
+router.post("/login", body("email").isEmail(), body("password").isLength({ min: 6 }), login);
 
 router.route("/users").get(getUsers).post(addUser);
 

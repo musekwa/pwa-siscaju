@@ -9,7 +9,7 @@ import {
 } from "../controllers/user.controllers.js";
 import { body } from 'express-validator'
 
-router.post("/login", body("email").isEmail(), body("password").isLength({ min: 6 }), login);
+router.route("/login").post(login);
 
 router.route("/users").get(getUsers).post(addUser);
 

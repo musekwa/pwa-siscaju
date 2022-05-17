@@ -16,11 +16,6 @@ const { body, validationResult } = expressValidator;
 const login = async (req, res, next) => {
   const { email, password } = req.body;
 
-  const errors  = validationResult(req);
-  if (!errors.isEmpty()){
-    return res.status(400).send({ errors: errors?.array()})
-  }
-  
   if (!email || !password) {
     return res.status(400).send({
       status: "FAILED",

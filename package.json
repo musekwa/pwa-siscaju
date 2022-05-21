@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "nodemon index.js ",
+    "client": "npm start --prefix frontend",
     "test": "mocha --recursive --exit || true"
   },
   "keywords": [],

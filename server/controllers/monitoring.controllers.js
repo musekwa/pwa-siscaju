@@ -10,60 +10,67 @@ import {
 
 const ObjectId = mongoose.Types.ObjectId;
 
-// register a new monitoring for a farm division
+//@desc 
+//@route 
+//@access
 const addMonitoringByVariability = async (req, res) => {
-  const { body, query } = req;
+  const { body, query, user, } = req;
 
   if (!query.divisionId || !query.variable) {
-    return res.status(400).send({
-      status: "FAILED",
-      message: "Indique 'divisionId' e 'variable'!",
-    });
+    res.status(400);
+    throw new Error("Indique 'divisionId' e 'variable'!");
   }
   try {
-    let savedInspection = await inspectDivision(query, body);
+    let savedInspection = await inspectDivision(user.id, query, body);
     return res.status(201).send({ status: "OK", data: savedInspection });
   } catch (error) {
-    return res
-      .status(error?.status || 500)
-      .send({ status: "FAILED", data: { error: error?.error || error } });
+    res.status(error?.status || 500);
+    throw new Error(error.message);
   }
 };
 
-const getMonitorings = async (req, res)=>{
-
+//@desc 
+//@route 
+//@access
+const getMonitorings = async (req, res) => {
   const {
-    query: { divisionId, variable, year}
+    query: { divisionId, variable, year },
   } = req;
 
-  if (!divisionId){
-    return res.status(400).send({ status: "FAILED", message: "Deve especificar 'divisionId'!" })
+  if (!divisionId) {
+    res.status(400);
+    throw new Error("Deve especificar 'divisionId'!");
   }
 
   try {
     let monitoring;
-    if (divisionId && !variable && !year){
+    if (divisionId && !variable && !year) {
       monitoring = await getMonitoringService(divisionId); // ok
-    }
-    else if (divisionId && !variable && year){
+    } else if (divisionId && !variable && year) {
       monitoring = await getMonitoringByYearService(divisionId, year); // ok
-    }
-    else if (divisionId && variable && !year){
-      monitoring = await getMonitoringByVariabilityService(divisionId, variable); // ok
-    }
-    else if (divisionId && variable && year){
-      monitoring = await getMonitoringByVariablityAndYearService(divisionId, variable, year); // ok
+    } else if (divisionId && variable && !year) {
+      monitoring = await getMonitoringByVariabilityService(
+        divisionId,
+        variable
+      ); // ok
+    } else if (divisionId && variable && year) {
+      monitoring = await getMonitoringByVariablityAndYearService(
+        divisionId,
+        variable,
+        year
+      ); // ok
     }
 
-    return res.status(200).send({ status: "OK", data: monitoring })
-
+    return res.status(200).send({ status: "OK", data: monitoring });
   } catch (error) {
-    return res.status(error?.status || 500).send({
-      status: "FAILED",
-      data: { error: error?.error || error },
-    });
+    // return res.status(error?.status || 500).send({
+    //   status: "FAILED",
+    //   data: { error: error?.error || error },
+    // });
+    res.status(error?.status || 500);
+    throw new Error(error.message);
   }
-}
+};
 
 export {
   addMonitoringByVariability,

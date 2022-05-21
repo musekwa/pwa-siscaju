@@ -8,9 +8,10 @@ import helmet from "helmet";
 import userRoutes from "./routes/user.routes.js";
 import farmerRoutes from "./routes/farmer.routes.js";
 import farmlandRoutes from "./routes/farmland.routes.js";
-import farmDivisionRoutes from "./routes/farmDivision.routes.js";
+import divisionRoutes from "./routes/division.routes.js";
 import monitoringRoutes from "./routes/monitoring.routes.js";
 import dbConnection from "../config/db.js";
+import { errorHandler} from './middleware/errorMiddleware.js'
 
 const { connect, disconnect } = dbConnection;
 
@@ -38,7 +39,8 @@ export {
   app,
   userRoutes,
   farmerRoutes,
-  farmDivisionRoutes,
+  divisionRoutes,
   farmlandRoutes,
   monitoringRoutes,
+  errorHandler
 };

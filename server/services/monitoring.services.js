@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import Monitoring from "../models/monitoring.model.js";
-import FarmDivision from "../models/farmDivision.model.js";
+import Division from "../models/division.model.js";
 import Disease from "../models/disease.model.js";
 import Plague from "../models/plague.model.js";
 import Pruning from "../models/pruning.model.js";
@@ -8,6 +8,7 @@ import Weeding from "../models/weeding.model.js";
 import Insecticide from "../models/insecticide.model.js";
 import Fungicide from "../models/fungicide.model.js";
 import Harvest from "../models/harvest.model.js";
+import { registerMonitoringService } from "./performance.services.js";
 
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -15,8 +16,8 @@ const ObjectId = mongoose.Types.ObjectId;
 // the following query values: 'disease'; 'plague', 'pruning'
 // 'weeding', 'insecticide applied', 'fungicide applied', and
 // 'harvest' in the current year.
-const inspectDivision = async (query, body) => {
-  let division = await FarmDivision.findById(ObjectId(query.divisionId));
+const inspectDivision = async (userId, query, body) => {
+  let division = await Division.findById(ObjectId(query.divisionId));
   if (!division) {
     return {
       status: 404,
@@ -75,6 +76,8 @@ const inspectDivision = async (query, body) => {
         message: "Deve especificar o valor de 'inspect'",
       };
   }
+  // register user performance
+  await registerMonitoringService(userId, division._id, query.variable);
   return savedInspection;
 };
 

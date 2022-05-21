@@ -4,15 +4,18 @@ import {
   userRoutes,
   farmerRoutes,
   farmlandRoutes,
-  farmDivisionRoutes,
+  divisionRoutes,
   monitoringRoutes,
+  errorHandler,
 }  from "./server/server.js";
 
 app.use(userRoutes);
 app.use(farmerRoutes);
 app.use(farmlandRoutes);
-app.use(farmDivisionRoutes);
+app.use(divisionRoutes);
 app.use(monitoringRoutes);
+
+app.use(errorHandler)
 
 app.get("/", (req, res) => {
   res.sendFile("index.html");

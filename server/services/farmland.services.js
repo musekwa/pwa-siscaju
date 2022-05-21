@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Farmland from "../models/farmland.model.js";
 import Farmer from "../models/farmer.model.js";
+import { registerFarmlandService } from "./performance.services.js";
 
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -22,11 +23,12 @@ const getFarmlandsService = async () => {
   }
 };
 
-const addFarmlandService = async (farmerId, body) => {
+const addFarmlandService = async (userId, farmerId, body) => {
   let newFarmland = new Farmland(body);
 
   try {
     let foundFarmer = await Farmer.findById(ObjectId(farmerId));
+
     if (!foundFarmer) {
       return {
         status: 404,
@@ -37,6 +39,8 @@ const addFarmlandService = async (farmerId, body) => {
     let updatedFarmer = await foundFarmer.save();
     newFarmland.farmer = updatedFarmer;
     let updatedFarmland = await newFarmland.save();
+  
+    await registerFarmlandService(userId, updatedFarmland._id);
     return {
       farmer: updatedFarmer,
       farmland: updatedFarmland,

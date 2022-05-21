@@ -6,16 +6,14 @@ import {
   updateFarmland,
   deleteFarmland,
 } from "../controllers/farmland.controllers.js";
+import { protect } from "../middleware/authMiddleware.js";
 
-router
-  .route("/farmlands")
-  .get(getFarmlands)
-  .post(addFarmland)
+router.route("/farmlands").post(protect, addFarmland).get(protect, getFarmlands);
 
 router
   .route("/farmlands/:farmlandId")
-  .get(getFarmlandById)
-  .patch(updateFarmland)
-  .delete(deleteFarmland);
+  .get(protect, getFarmlandById)
+  .patch(protect, updateFarmland)
+  .delete(protect, deleteFarmland);
 
 export default router;

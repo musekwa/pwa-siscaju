@@ -9,39 +9,53 @@ import {
 } from "../services/user.services.js";
 import _ from "lodash";
 import expressValidator from "express-validator";
-
+import jwt from "jsonwebtoken";
+import { generateToken } from "../middleware/authMiddleware.js";
 const { body, validationResult } = expressValidator;
 
-// login
+
+
+//@desc login
+//@route
+//@access
 const login = async (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).send({
-      status: "FAILED",
-      message: "Deve especificar 'email' e 'password'!",
-    });
+    // return res.status(400).send({
+    //   status: "FAILED",
+    //   message: "Deve especificar 'email' e 'password'!",
+    // });
+    res.status(400);
+    throw new Error("Deve especificar 'email' e 'password'!");
   }
 
   try {
     let user = await loginService({ email, password });
+
+    // 
     res.status(201).send({
       status: "OK",
-      data: user,
+      data: { ...user._doc, token: generateToken(user._id) },
     });
-    next()
+    return;
   } catch (error) {
-    return res.status(error?.status || 500).send({
-      status: "FAILED",
-      data: { error: error?.error || error },
-    });
+    // return res.status(error?.status || 500).send({
+    //   status: "FAILED",
+    //   data: { error: error?.error || error },
+    // });
+    res.status(error?.status || 500);
+    throw new Error(error.message);
   }
 };
 
-// get all registered users
+//@desc
+//@route
+//@access
 const getUsers = async (req, res) => {
   const {
     query: { role },
+    user,
   } = req;
 
   try {
@@ -63,51 +77,70 @@ const getUsers = async (req, res) => {
       data: users,
     });
   } catch (error) {
-    return res.status(error?.status || 500).send({
-      status: "FAILED",
-      data: { error: error?.message || error },
-    });
+    // return res.status(error?.status || 500).send({
+    //   status: "FAILED",
+    //   data: { error: error?.message || error },
+    // });
+    res.status(error?.status || 500);
+    throw new Error(error.message);
   }
 };
 
-// register a new user
+//@desc
+//@route
+//@access
 const addUser = async (req, res) => {
   const { body } = req;
   if (!body.fullname || !body.email || !body.password || !body.role) {
-    return res.status(400).send({
-      status: "FAILED",
-      data: {
-        error:
-          "Alguns campos de dados obrigatorios sao vazios: fullname, email, password, role",
-      },
-    });
+    res.status(400);
+    throw new Error(
+      "Alguns campos de dados obrigatorios sao vazios: fullname, email, password, roleI!"
+    );
   }
 
   try {
     let savedUser = await addUserService(body);
+
+    // custom jwt user id
+    // const user = {
+    //   id: savedUser._id,
+    //   firstname: savedUser.fullname.split(" ")[0],
+    //   role: savedUser.role,
+    //   province: savedUser.address.province,
+    //   district: savedUser.address.district,
+    // };
     return res.status(201).send({
       status: "OK",
-      data: savedUser,
+      data: {
+        ...savedUser._doc,
+        token: generateToken(savedUser._id),
+      },
     });
   } catch (error) {
-    return res.status(error?.status || 500).send({
-      status: "FAILED",
-      data: { error: error?.message || error },
-    });
+    // return res.status(error?.status || 500).send({
+    //   status: "FAILED",
+    //   data: { error: error?.message || error },
+    // });
+    res.status(error?.status || 500);
+    throw new Error(error.message);
   }
 };
 
-// get user by ID
+//@desc
+//@route
+//@access
 const getUserById = async (req, res) => {
   // const userId = req.params.userId;
   const {
     params: { userId },
   } = req;
   if (!userId) {
-    res.status(400).send({
-      status: "FAILED",
-      data: { error: "O parametro ':userId' nao pode ser vazio" },
-    });
+    // res.status(400).send({
+    //   status: "FAILED",
+    //   data: { error: "O parametro ':userId' nao pode ser vazio" },
+    // });
+    res.status(400);
+    throw new Error("O parametro ':userId' nao pode ser vazio");
   }
   try {
     let foundUser = await getUserByIdService(userId);
@@ -122,14 +155,18 @@ const getUserById = async (req, res) => {
       data: foundUser,
     });
   } catch (error) {
-    res.status(error?.status || 500).json({
-      status: "FAILED",
-      data: { error: error?.message || error },
-    });
+    // res.status(error?.status || 500).json({
+    //   status: "FAILED",
+    //   data: { error: error?.message || error },
+    // });
+    res.status(error?.status || 500);
+    throw new Error(error.message);
   }
 };
 
-// update an already-registered user
+//@desc
+//@route
+//@access
 const updateUser = async (req, res) => {
   const {
     body,
@@ -137,10 +174,8 @@ const updateUser = async (req, res) => {
   } = req;
 
   if (!userId) {
-    res.status(400).send({
-      status: "FAILED",
-      data: { error: error?.message || error },
-    });
+    res.status(400);
+    throw new Error("O parametro ':userId' nao pode ser vazio");
   }
 
   try {
@@ -156,34 +191,42 @@ const updateUser = async (req, res) => {
       data: updatedUser,
     });
   } catch (error) {
-    res.status(error?.status || 500).send({
-      status: "FAILED",
-      data: { error: error?.message || error },
-    });
+    // res.status(error?.status || 500).send({
+    //   status: "FAILED",
+    //   data: { error: error?.message || error },
+    // });
+    res.status(error?.status || 500);
+    throw new Error(error.message);
   }
 };
 
-// delete a registered user
+//@desc
+//@route
+//@access
 const deleteUser = async (req, res) => {
   const {
     params: { userId },
   } = req;
 
   if (!userId) {
-    res.status(400).send({
-      status: "FAILED",
-      data: { error: error?.error || error },
-    });
+    // res.status(400).send({
+    //   status: "FAILED",
+    //   data: { error: error?.error || error },
+    // });
+    res.status(400);
+    throw new Error("O parametro ':userId' nao pode ser vazio");
   }
 
   try {
     let deletionResult = await deleteUserService(userId);
     res.status(204).send(deletionResult);
   } catch (err) {
-    return res.status(error?.error || 500).send({
-      status: "FAILED",
-      data: { error: error?.message || error },
-    });
+    // return res.status(error?.error || 500).send({
+    //   status: "FAILED",
+    //   data: { error: error?.message || error },
+    // });
+    res.status(error?.status || 500);
+    throw new Error(error.message);
   }
 };
 

@@ -5,15 +5,14 @@ import {
   // updateMonitoring,
   // deleteMonitoring,
 } from "../controllers/monitoring.controllers.js";
+import { protect } from '../middleware/authMiddleware.js'
 
 router
   .route("/monitorings")
-  .get(getMonitorings) // get by divisionId and year as query values
-  .post(addMonitoringByVariability);
+  .get(protect, getMonitorings)
+  .post(protect, addMonitoringByVariability);
 
-router
-  .route("/monitorings/:monitoringId")
-  // .patch(updateMonitoring)
-  // .delete(deleteMonitoring); 
+// router.patch("/monitorings/:monitoringId");
+// router.delete("/monitorings/:monitoringId");
 
 export default router;

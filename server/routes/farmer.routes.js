@@ -6,16 +6,16 @@ import {
   updateFarmer,
   deleteFarmer,
 } from "../controllers/farmer.controllers.js";
+import { protect } from '../middleware/authMiddleware.js'
 
-router.route("/farmers").get(getFarmers).post(addFarmer);
+router.route("/farmers").post(protect, addFarmer).get(protect, getFarmers);
 
 router
   .route("/farmers/:farmerId")
-  .get(getFarmerById)
-  .patch(updateFarmer)
-  .delete(deleteFarmer);
+  .get(protect, getFarmerById)
+  .patch(protect, updateFarmer)
+  .delete(protect, deleteFarmer);
 
-router.route
-
+router;
 
 export default router;

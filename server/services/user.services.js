@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
 import mongoose from "mongoose";
+// import jwt from "jsonwebtoken";
 
 
 const ObjectId = mongoose.Types.ObjectId;
@@ -44,7 +45,6 @@ const getUsersByRoleService = async (role)=>{
 
   try {
     let users = await User.find({ role: role });
-    console.log('users by role: ', users)
     if (!users) {
       return {
         status: 404,

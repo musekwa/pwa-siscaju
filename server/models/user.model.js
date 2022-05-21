@@ -42,7 +42,7 @@ var usersSchema = new Schema(
         message: "{VALUE} não é um genero autorizado",
       },
     },
-    birthDate: Date,
+    // birthDate: Date,
     address: {
       province: {
         type: String,
@@ -83,8 +83,8 @@ var usersSchema = new Schema(
           message: "Por enquanto, {VALUE} não é uma distrito autorizado!",
         },
       },
-      territory: { type: String, trim: true },
-      village: { type: String, trim: true },
+      // territory: { type: String, trim: true },
+      // village: { type: String, trim: true },
     },
     phone: {
       type: String,
@@ -126,6 +126,7 @@ usersSchema.pre("save", function(next){
         return next(saltError)
       }
       else {
+        user.salt = salt;
         bcrypt.hash(user.password, salt, function(hashError, hash){
           if (hashError){
             return next(hashError);

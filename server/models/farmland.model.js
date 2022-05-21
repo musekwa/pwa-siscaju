@@ -14,7 +14,7 @@ const farmlandsSchema = mongoose.Schema(
       latitude: Number,
       longitude: Number,
     },
-    farmDivisions: [ObjectId],
+    divisions: [ObjectId],
     farmer: {
       type: Schema.Types.ObjectId,
       ref: "Farmer",

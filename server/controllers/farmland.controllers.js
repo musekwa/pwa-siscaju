@@ -14,38 +14,41 @@ import {
 
 const ObjectId = mongoose.Types.ObjectId;
 
-// create a new farmland by farmer (farmerId)
+//@desc
+//@route
+//@access
 const addFarmland = async (req, res) => {
   const {
     body,
     query: { farmerId },
+    user,
   } = req;
 
   if (!farmerId || !body) {
-    return res.status(400).send({
-      status: "FAILED",
-      message:
-        "Algo foi esquecido: ou o parametro 'farmerId' ou dados do pomar (body)",
-    });
+    res.status(400);
+    throw new Error(
+      "Deve indicar ou o parametro 'farmerId' ou dados do pomar!"
+    );
   }
   try {
-    let savedFarmland = await addFarmlandService(farmerId, body);
+    let savedFarmland = await addFarmlandService(user.id, farmerId, body);
     return res.status(201).send({
       status: "OK",
       data: { farmer: savedFarmland.farmer, farmland: savedFarmland.farmland },
     });
   } catch (error) {
-    return res.status(error?.status || 500).send({
-      status: "FAILED",
-      data: { error: error?.error || error },
-    });
+    res.status(error?.status || 500);
+    throw new Error(error.message);
   }
 };
 
-// list registered farmlands by passed queries
+//@desc
+//@route
+//@access
 const getFarmlands = async (req, res) => {
   const {
     query: { farmerId, farmlandId },
+    user,
   } = req;
 
   try {
@@ -71,13 +74,18 @@ const getFarmlands = async (req, res) => {
       data: farmlands,
     });
   } catch (error) {
-    return res.status(error?.status || 500).send({
-      status: "FAILED",
-      data: { error: error?.error || error },
-    });
+    // return res.status(error?.status || 500).send({
+    //   status: "FAILED",
+    //   data: { error: error?.error || error },
+    // });
+    res.status(error?.status || 500);
+    throw new Error(error.message);
   }
 };
 
+//@desc
+//@route
+//@access
 const getFarmlandById = async (req, res) => {
   const {
     params: { farmlandId },
@@ -86,14 +94,18 @@ const getFarmlandById = async (req, res) => {
     let foundFarmland = await getFarmlandByFarmlandIdService(farmlandId);
     return res.status(200).send({ status: "OK", data: foundFarmland });
   } catch (error) {
-    return res.status(error?.status || 500).send({
-      status: "FAILED",
-      data: { error: error?.error || error },
-    });
+    // return res.status(error?.status || 500).send({
+    //   status: "FAILED",
+    //   data: { error: error?.error || error },
+    // });
+    res.status(error?.status || 500);
+    throw new Error(error.message);
   }
 };
 
-// update an already-registered farmland
+//@desc
+//@route
+//@access
 const updateFarmland = async (req, res) => {
   const {
     body,
@@ -101,10 +113,12 @@ const updateFarmland = async (req, res) => {
   } = req;
 
   if (!farmlandId) {
-    return res.status(400).send({
-      status: "FAILED",
-      message: "Deve especificar ':farmerId' e ':farmlandId'",
-    });
+    // return res.status(400).send({
+    //   status: "FAILED",
+    //   message: "Deve especificar ':farmerId' e ':farmlandId'",
+    // });
+    res.status(400);
+    throw new Error("Deve especificar 'farmerId' e 'farmlandId'");
   }
 
   try {
@@ -118,14 +132,18 @@ const updateFarmland = async (req, res) => {
 
     return res.status(200).send({ status: "OK", data: updatedFarmland });
   } catch (error) {
-    return res.status(error?.status || 500).send({
-      status: "FAILED",
-      data: { error: error?.error || error },
-    });
+    // return res.status(error?.status || 500).send({
+    //   status: "FAILED",
+    //   data: { error: error?.error || error },
+    // });
+    res.status(error?.status || 500);
+    throw new Error(error.message);
   }
 };
 
-// delete a registered farmland
+//@desc
+//@route
+//@access
 const deleteFarmland = async (req, res) => {
   const {
     params: { farmlandId },
@@ -133,10 +151,12 @@ const deleteFarmland = async (req, res) => {
   } = req;
 
   if (!farmerId || !farmlandId) {
-    return res.status(400).send({
-      status: "FAILED",
-      message: "Deve especificar 'farmerId' e 'farmlandId'",
-    });
+    // return res.status(400).send({
+    //   status: "FAILED",
+    //   message: "Deve especificar 'farmerId' e 'farmlandId'",
+    // });
+    res.status(400);
+    throw new Error("Deve especificar 'farmerId' e 'farmlandId'");
   }
 
   try {
@@ -145,10 +165,12 @@ const deleteFarmland = async (req, res) => {
       .status(204)
       .send({ status: "OK", message: "Pomar eliminado", data: deletionResult });
   } catch (error) {
-    return res.status(error?.status || 500).send({
-      status: "FAILED",
-      message: error?.message || error,
-    });
+    // return res.status(error?.status || 500).send({
+    //   status: "FAILED",
+    //   message: error?.message || error,
+    // });
+    res.status(error?.status || 500);
+    throw new Error(error.message);
   }
 };
 

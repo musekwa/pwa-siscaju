@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 import Farmer from "../models/farmer.model.js";
+import Performance from "../models/performance.model.js";
+import { registerFarmerService } from "./performance.services.js";
 
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -21,10 +23,11 @@ const getFarmersService = async () => {
   }
 };
 
-const addFarmerService = async (farmer) => {
+const addFarmerService = async (userId, farmer) => {
   const newFarmer = new Farmer(farmer);
   try {
     const savedFarmer = await newFarmer.save();
+    await registerFarmerService(userId, savedFarmer._id)
     return savedFarmer;
   } catch (error) {
     throw {
@@ -33,6 +36,28 @@ const addFarmerService = async (farmer) => {
     };
   }
 };
+
+const getFarmerByDistrictService = async (district) => {
+  try {
+    const foundFarmer = await Farmer.find({ district: { adress: { district }}}).populate(
+      "farmlands"
+    );
+    if (!foundFarmer) {
+      return {
+        status: 404,
+        message: "Nao existe produtores desta provincia",
+      };
+    }
+    return foundFarmer;
+  } catch (error) {
+    throw {
+      status: 500,
+      message: { error: error?.message || error },
+    };
+  }
+};
+
+
 
 const getFarmerByIdService = async (farmerId) => {
   try {
@@ -96,6 +121,7 @@ export {
   getFarmersService,
   addFarmerService,
   getFarmerByIdService,
+  getFarmerByDistrictService,
   updateFarmerService,
   deleteFarmerService,
 };

@@ -80,11 +80,7 @@ const registerMonitoringService = async (userId, divisionId, monitoredVariable) 
 
 const getPerformanceService = async (key) => {
   try {
-    if (!key) {
-      return await Performance.find({}).populate(
-        "farmers farmlands monitorings"
-      );
-    } else if (key === "farmers") {
+    if (key === "farmers") {
       return await Performance.find({}).select("farmers").populate("farmers");
     } else if (key === "farmlands") {
       return await Performance.find({})
@@ -95,6 +91,11 @@ const getPerformanceService = async (key) => {
         .select("monitorings")
         .populate("monitorings");
     }
+    else {
+        return await Performance.find({}).populate(
+          "farmers farmlands monitorings"
+        );
+      } 
   } catch (error) {
     throw {
       status: 500,

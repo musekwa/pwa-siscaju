@@ -22,7 +22,7 @@ const addMonitoringByVariability = async (req, res) => {
   }
   try {
     let savedInspection = await inspectDivision(user.id, query, body);
-    return res.status(201).send({ status: "OK", data: savedInspection });
+    return res.status(201).json({ status: "OK", data: savedInspection });
   } catch (error) {
     res.status(error?.status || 500);
     throw new Error(error.message);
@@ -61,12 +61,8 @@ const getMonitorings = async (req, res) => {
       ); // ok
     }
 
-    return res.status(200).send({ status: "OK", data: monitoring });
+    return res.status(200).json({ status: "OK", data: monitoring });
   } catch (error) {
-    // return res.status(error?.status || 500).send({
-    //   status: "FAILED",
-    //   data: { error: error?.error || error },
-    // });
     res.status(error?.status || 500);
     throw new Error(error.message);
   }

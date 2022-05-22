@@ -9,7 +9,7 @@ const getFarmlandsService = async () => {
   try {
     let farmlands = await Farmland.find({});
     if (!farmlands) {
-      return {
+      throw {
         status: 404,
         message: "Nao existe pomares registados",
       };
@@ -17,7 +17,7 @@ const getFarmlandsService = async () => {
     return farmlands;
   } catch (error) {
     throw {
-      status: "FAILED",
+      status: error?.status || 500,
       message: error?.message || error,
     };
   }
@@ -30,8 +30,8 @@ const addFarmlandService = async (userId, farmerId, body) => {
     let foundFarmer = await Farmer.findById(ObjectId(farmerId));
 
     if (!foundFarmer) {
-      return {
-        status: 404,
+      throw {
+        status: 400,
         message: "Nao pode adicionar pomar de um produtor que nao existe",
       };
     }
@@ -47,7 +47,7 @@ const addFarmlandService = async (userId, farmerId, body) => {
     };
   } catch (error) {
     throw {
-      status: "FAILED",
+      status: error?.status || 500,
       message: error?.message || error,
     };
   }
@@ -57,15 +57,15 @@ const getFarmlandsByFarmerIdService = async (farmerId) => {
   try {
     const foundFarmlands = await Farmland.find({ farmer: ObjectId(farmerId) });
     if (!foundFarmlands) {
-      return {
-        status: 404,
+      throw {
+        status: 400,
         message: "Este produtor nao possui nenhum pomar",
       };
     }
     return foundFarmlands;
   } catch (error) {
     throw {
-      status: "FAILED",
+      status: error?.status || 500,
       message: error?.message || error,
     };
   }
@@ -80,7 +80,7 @@ const getOneFarmlandByFarmerIdService = async (farmerId, farmlandId) => {
     return foundFarmland;
   } catch (error) {
     throw {
-      status: "FAILED",
+      status: error?.status || 500,
       message: error?.message || error,
     };
   }
@@ -90,7 +90,7 @@ const getFarmlandByFarmlandIdService = async (farmlandId) => {
   try {
     let foundFarmland = await Farmland.findById(ObjectId(farmlandId));
     if (!foundFarmland) {
-      return {
+      throw {
         status: 404,
         message: "Pomar nao encontrado!",
       };
@@ -98,7 +98,7 @@ const getFarmlandByFarmlandIdService = async (farmlandId) => {
     return foundFarmland;
   } catch (error) {
     throw {
-      status: "FAILED",
+      status: error?.status || 500,
       message: error?.message || error,
     };
   }
@@ -112,7 +112,7 @@ const updateFarmlandService = async (farmlandId, body) => {
       { runValidators: true, new: true }
     );
     if (!updatedFarmland) {
-      return {
+      throw {
         status: 404,
         message: "Pomar nao encontrado",
       };
@@ -121,7 +121,7 @@ const updateFarmlandService = async (farmlandId, body) => {
     return updatedFarmland;
   } catch (error) {
     throw {
-      status: "FAILED",
+      status: error?.status || 500,
       message: error?.message || error,
     };
   }
@@ -135,14 +135,14 @@ const deleteFarmlandService = async (farmerId, farmlandId) => {
     });
 
     if (!deletionResult) {
-      return {
+      throw {
         status: 404,
         message: "Pomar nao encontrado",
       };
     }
     let farmlandOwner = await Farmer.findById(ObjectId(farmerId));
     if (!farmlandOwner) {
-      return {
+      throw {
         status: 404,
         message: "Proprietario do pomar nao encontrado",
       };
@@ -154,10 +154,10 @@ const deleteFarmlandService = async (farmerId, farmlandId) => {
 
     return deletionResult;
   } catch (error) {
-    return res.status(error?.status || 500).send({
-      status: "FAILED",
+    throw {
+      status: error?.status || 500,
       message: error?.message || error,
-    });
+    };
   }
 };
 

@@ -9,7 +9,7 @@ const getFarmersService = async () => {
   try {
     let farmers = await Farmer.find({});
     if (!farmers) {
-      return {
+      throw {
         status: 404,
         message: "Nenhum produtor encontrado"
       }
@@ -18,7 +18,7 @@ const getFarmersService = async () => {
   } catch (error) {
     throw {
       status: 500,
-      message: { error: error?.message || error },
+      message: error?.message || error,
     };
   }
 };
@@ -32,7 +32,7 @@ const addFarmerService = async (userId, farmer) => {
   } catch (error) {
     throw {
       status: 500,
-      message: { error: error?.message || error },
+      message: error?.message || error,
     };
   }
 };
@@ -43,7 +43,7 @@ const getFarmerByDistrictService = async (district) => {
       "farmlands"
     );
     if (!foundFarmer) {
-      return {
+      throw {
         status: 404,
         message: "Nao existe produtores desta provincia",
       };
@@ -51,8 +51,8 @@ const getFarmerByDistrictService = async (district) => {
     return foundFarmer;
   } catch (error) {
     throw {
-      status: 500,
-      message: { error: error?.message || error },
+      status: error?.status || 500,
+      message: error?.message || error,
     };
   }
 };
@@ -65,7 +65,7 @@ const getFarmerByIdService = async (farmerId) => {
       "farmlands"
     );
     if (!foundFarmer) {
-      return {
+      throw {
         status: 404,
         message: "Este produtor nao existe",
       }
@@ -73,8 +73,8 @@ const getFarmerByIdService = async (farmerId) => {
     return foundFarmer;
   } catch (error) {
     throw {
-      status: 500,
-      message: { error: error?.message || error },
+      status: error?.status || 500,
+      message: error?.message || error,
     };
   }
 };
@@ -87,7 +87,7 @@ const updateFarmerService = async (farmerId, body) => {
       { runValidators: true, new: true }
     );
     if (!updatedFarmer) {
-      return {
+      throw {
         status: 404,
         message: "Este produtor nao existe",
       }
@@ -95,8 +95,8 @@ const updateFarmerService = async (farmerId, body) => {
     return updatedFarmer;
   } catch (error) {
     throw {
-      status: 500,
-      message: { error: error?.message || error },
+      status: error?.status || 500,
+      message: error?.message || error,
     };
   }
 };
@@ -109,8 +109,8 @@ const deleteFarmerService = async (farmerId) => {
     return deletionResult;
   } catch (error) {
     throw {
-      status: 500,
-      message: { error: error?.message || error },
+      status: error?.status || 500,
+      message: error?.message || error,
     };
   }
 };

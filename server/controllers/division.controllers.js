@@ -29,7 +29,7 @@ const addDivision = async (req, res) => {
     }
 
     let farmland = await addDivisionService(farmlandId, body);
-    return res.status(200).send({
+    return res.status(200).json({
       status: "OK",
       data: farmland,
     });
@@ -54,15 +54,11 @@ const getDivisions = async (req, res) => {
     } else if (farmlandId && divisionId) {
       foundDivisions = await getOneDivisionService(farmlandId, divisionId);
     }
-    return res.status(200).send({
+    return res.status(200).json({
       status: "OK",
       data: foundDivisions,
     });
   } catch (error) {
-    // return res.status(error?.status || 500).send({
-    //   status: "FAILED",
-    //   data: { error: error?.error || error },
-    // });
     res.status(error?.status || 500);
     throw new Error(error.message);
   }
@@ -80,23 +76,17 @@ const updateDivision = async (req, res) => {
   if (farmlandId && divisionId) {
     try {
       let updatedDivision = await updateDivisionService(divisionId, body);
-      return res.status(200).send({
+      return res.status(200).json({
         status: "OK",
         data: updatedDivision,
       });
     } catch (error) {
-      return res.status(error?.status || 500).send({
-        status: "FAILED",
-        data: { error: error?.error || error },
-      });
+      res.status(error?.status || 500);
+      throw new Error(error?.message || error.error || error);
     }
   } else {
-    // return res.status(400).send({
-    //   status: "FAILED",
-    //   message: "Deve especificar 'farmlandId' e 'divisionId'",
-    // });
-    res.status(error?.status || 500);
-    throw new Error(error.message);
+    res.status(400);
+    throw new Error("Deve especificar 'divisionId' e 'farmlandId'");
   }
 };
 
@@ -112,12 +102,8 @@ const deleteDivision = async (req, res) => {
     let deletionResult = await deleteDivisionService(farmlandId, divisionId);
     return res
       .status(204)
-      .send({ status: "OK", message: "Subdivisao liminada com sucesso" });
+      .json({ status: "OK", message: "Subdivisao liminada com sucesso", data: deletionResult });
   } catch (error) {
-    // return res.status(error?.status || 500).send({
-    //   status: "FAILED",
-    //   data: { error: error?.error || error },
-    // });
     res.status(error?.status || 500);
     throw new Error(error.message);
   }

@@ -11,11 +11,12 @@ const loginService = async (body)=>{
   try {
     let user = await User.authenticate(email, password)
     if (!user){
-      return {
-        status: "Ou utilizador nao existe ou password nao corresponde"
+      throw {
+        status: 404,
+        message: 'Utilizador nao exisite!',
       }
-    }
-    return user
+   }
+    return user;
   } catch (error) {
     throw {
       status: 500, message: error?.message || error
@@ -27,7 +28,7 @@ const getUsersService = async () => {
   try {
     let users = await User.find({});
     if (!users) {
-      return {
+      throw {
         status: 404,
         message: "Nenhum utilizador encontrado"
       }
@@ -46,7 +47,7 @@ const getUsersByRoleService = async (role)=>{
   try {
     let users = await User.find({ role: role });
     if (!users) {
-      return {
+      throw {
         status: 404,
         message: `Nenhum ${role} encontrado`,
       };

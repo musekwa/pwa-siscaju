@@ -19,31 +19,26 @@ const { body, validationResult } = expressValidator;
 //@route
 //@access
 const login = async (req, res, next) => {
-  const { email, password } = req.body;
+  const { body } = req;
 
-  if (!email || !password) {
-    // return res.status(400).send({
-    //   status: "FAILED",
-    //   message: "Deve especificar 'email' e 'password'!",
-    // });
+  if (!body.email || !body.password) {
     res.status(400);
     throw new Error("Deve especificar 'email' e 'password'!");
   }
 
   try {
-    let user = await loginService({ email, password });
+    let user = await loginService(body);
 
-    // 
-    res.status(201).send({
-      status: "OK",
-      data: { ...user._doc, token: generateToken(user._id) },
+    const {
+      fullname, address, email, role, _id, createdAt
+    } = user
+
+    return res.status(201).json({
+        fullname, address, email, role, _id, createdAt,
+        // ...user._doc,
+        token: generateToken(user._id),
     });
-    return;
   } catch (error) {
-    // return res.status(error?.status || 500).send({
-    //   status: "FAILED",
-    //   data: { error: error?.error || error },
-    // });
     res.status(error?.status || 500);
     throw new Error(error.message);
   }
@@ -67,20 +62,15 @@ const getUsers = async (req, res) => {
     }
 
     if (!users) {
-      return res.status(404).send({
-        status: "NOT FOUND",
-        message: "Utilizadores nao encontrados",
-      });
+      res.status(404);
+      throw new Error("Utilizadores nao encontrados");
     }
-    return res.status(200).send({
+    
+    return res.status(200).json({
       status: "OK",
       data: users,
     });
   } catch (error) {
-    // return res.status(error?.status || 500).send({
-    //   status: "FAILED",
-    //   data: { error: error?.message || error },
-    // });
     res.status(error?.status || 500);
     throw new Error(error.message);
   }
@@ -101,26 +91,16 @@ const addUser = async (req, res) => {
   try {
     let savedUser = await addUserService(body);
 
-    // custom jwt user id
-    // const user = {
-    //   id: savedUser._id,
-    //   firstname: savedUser.fullname.split(" ")[0],
-    //   role: savedUser.role,
-    //   province: savedUser.address.province,
-    //   district: savedUser.address.district,
-    // };
-    return res.status(201).send({
-      status: "OK",
-      data: {
-        ...savedUser._doc,
+    const {
+      fullname, address, email, role, _id, createdAt
+    } = savedUser;
+
+    return res.status(201).json({
+        // ...savedUser._doc,
+        fullname, address, email, role, _id, createdAt,
         token: generateToken(savedUser._id),
-      },
     });
   } catch (error) {
-    // return res.status(error?.status || 500).send({
-    //   status: "FAILED",
-    //   data: { error: error?.message || error },
-    // });
     res.status(error?.status || 500);
     throw new Error(error.message);
   }
@@ -130,35 +110,24 @@ const addUser = async (req, res) => {
 //@route
 //@access
 const getUserById = async (req, res) => {
-  // const userId = req.params.userId;
   const {
     params: { userId },
   } = req;
   if (!userId) {
-    // res.status(400).send({
-    //   status: "FAILED",
-    //   data: { error: "O parametro ':userId' nao pode ser vazio" },
-    // });
     res.status(400);
     throw new Error("O parametro ':userId' nao pode ser vazio");
   }
   try {
     let foundUser = await getUserByIdService(userId);
     if (!foundUser) {
-      res.status(404).send({
-        status: "NOT FOUND",
-        message: "Utilizador nao encontrado",
-      });
+      res.status(404);
+      throw new Error("Utilizador nao encontrado");
     }
-    res.status(200).send({
+    res.status(200).json({
       status: "OK",
       data: foundUser,
     });
   } catch (error) {
-    // res.status(error?.status || 500).json({
-    //   status: "FAILED",
-    //   data: { error: error?.message || error },
-    // });
     res.status(error?.status || 500);
     throw new Error(error.message);
   }
@@ -181,20 +150,14 @@ const updateUser = async (req, res) => {
   try {
     let updatedUser = await updateUserService(userId, body);
     if (!updatedUser) {
-      res.status(404).send({
-        status: "NOT FOUND",
-        message: "Utilizador nao encontrado",
-      });
+      res.status(404);
+      throw new Error("Utilizador nao encontrado");
     }
-    res.status(200).send({
+    res.status(200).json({
       status: "OK",
       data: updatedUser,
     });
   } catch (error) {
-    // res.status(error?.status || 500).send({
-    //   status: "FAILED",
-    //   data: { error: error?.message || error },
-    // });
     res.status(error?.status || 500);
     throw new Error(error.message);
   }
@@ -209,22 +172,14 @@ const deleteUser = async (req, res) => {
   } = req;
 
   if (!userId) {
-    // res.status(400).send({
-    //   status: "FAILED",
-    //   data: { error: error?.error || error },
-    // });
     res.status(400);
     throw new Error("O parametro ':userId' nao pode ser vazio");
   }
 
   try {
     let deletionResult = await deleteUserService(userId);
-    res.status(204).send(deletionResult);
+    res.status(204).json({ status: "OK", message: "Utilizador eliminado", data: deletionResult });
   } catch (err) {
-    // return res.status(error?.error || 500).send({
-    //   status: "FAILED",
-    //   data: { error: error?.message || error },
-    // });
     res.status(error?.status || 500);
     throw new Error(error.message);
   }

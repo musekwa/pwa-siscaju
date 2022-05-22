@@ -32,7 +32,7 @@ const addFarmland = async (req, res) => {
   }
   try {
     let savedFarmland = await addFarmlandService(user.id, farmerId, body);
-    return res.status(201).send({
+    return res.status(201).json({
       status: "OK",
       data: { farmer: savedFarmland.farmer, farmland: savedFarmland.farmland },
     });
@@ -64,20 +64,14 @@ const getFarmlands = async (req, res) => {
       farmlands = await getOneFarmlandByFarmerIdService(farmerId, farmlandId);
     }
     if (!farmlands) {
-      return res.status(404).send({
-        status: "NOT FOUND",
-        message: "Pomares nao encontrados!",
-      });
+      res.status(404);
+      throw new Error("Pomares nao encontrados!");
     }
-    return res.status(200).send({
+    return res.status(200).json({
       status: "OK",
       data: farmlands,
     });
   } catch (error) {
-    // return res.status(error?.status || 500).send({
-    //   status: "FAILED",
-    //   data: { error: error?.error || error },
-    // });
     res.status(error?.status || 500);
     throw new Error(error.message);
   }
@@ -92,12 +86,8 @@ const getFarmlandById = async (req, res) => {
   } = req;
   try {
     let foundFarmland = await getFarmlandByFarmlandIdService(farmlandId);
-    return res.status(200).send({ status: "OK", data: foundFarmland });
+    return res.status(200).json({ status: "OK", data: foundFarmland });
   } catch (error) {
-    // return res.status(error?.status || 500).send({
-    //   status: "FAILED",
-    //   data: { error: error?.error || error },
-    // });
     res.status(error?.status || 500);
     throw new Error(error.message);
   }
@@ -113,10 +103,6 @@ const updateFarmland = async (req, res) => {
   } = req;
 
   if (!farmlandId) {
-    // return res.status(400).send({
-    //   status: "FAILED",
-    //   message: "Deve especificar ':farmerId' e ':farmlandId'",
-    // });
     res.status(400);
     throw new Error("Deve especificar 'farmerId' e 'farmlandId'");
   }
@@ -124,18 +110,12 @@ const updateFarmland = async (req, res) => {
   try {
     let updatedFarmland = await updateFarmlandService(farmlandId, body);
     if (!updatedFarmland) {
-      return res.status(404).send({
-        status: "NOT FOUND",
-        message: "Pomar nao econtrado",
-      });
+      res.status(404);
+      throw new Error("Pomar nao econtrado");
     }
 
-    return res.status(200).send({ status: "OK", data: updatedFarmland });
+    return res.status(200).json({ status: "OK", data: updatedFarmland });
   } catch (error) {
-    // return res.status(error?.status || 500).send({
-    //   status: "FAILED",
-    //   data: { error: error?.error || error },
-    // });
     res.status(error?.status || 500);
     throw new Error(error.message);
   }
@@ -151,10 +131,6 @@ const deleteFarmland = async (req, res) => {
   } = req;
 
   if (!farmerId || !farmlandId) {
-    // return res.status(400).send({
-    //   status: "FAILED",
-    //   message: "Deve especificar 'farmerId' e 'farmlandId'",
-    // });
     res.status(400);
     throw new Error("Deve especificar 'farmerId' e 'farmlandId'");
   }
@@ -163,12 +139,8 @@ const deleteFarmland = async (req, res) => {
     let deletionResult = await deleteFarmlandService(farmerId, farmlandId);
     return res
       .status(204)
-      .send({ status: "OK", message: "Pomar eliminado", data: deletionResult });
+      .json({ status: "OK", message: "Pomar eliminado", data: deletionResult });
   } catch (error) {
-    // return res.status(error?.status || 500).send({
-    //   status: "FAILED",
-    //   message: error?.message || error,
-    // });
     res.status(error?.status || 500);
     throw new Error(error.message);
   }

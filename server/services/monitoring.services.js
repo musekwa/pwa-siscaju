@@ -19,7 +19,7 @@ const ObjectId = mongoose.Types.ObjectId;
 const inspectDivision = async (userId, query, body) => {
   let division = await Division.findById(ObjectId(query.divisionId));
   if (!division) {
-    return {
+    throw {
       status: 404,
       message: "Subvisao nao encontrada!",
     };
@@ -72,7 +72,7 @@ const inspectDivision = async (userId, query, body) => {
       break;
     default:
       throw {
-        status: "FAILED",
+        status: 400,
         message: "Deve especificar o valor de 'inspect'",
       };
   }
@@ -87,7 +87,7 @@ const getMonitoringService = async (divisionId) => {
       division: ObjectId(divisionId),
     }).populate("disease plague weeding pruning insecticide fungicide harvest");
     if (!monitoring) {
-      return {
+      throw {
         status: 404,
         message: "Monitoria desta subdivisao nao encontrada!",
       };
@@ -109,7 +109,7 @@ const getMonitoringByYearService = async (divisionId, year) => {
     }).populate("disease plague pruning weeding insecticide fungicide harvest");
 
     if (!monitoring) {
-      return {
+      throw {
         status: 404,
         message: "Monitoring desta subdivisao nao encontrada!",
       };
@@ -129,7 +129,7 @@ const getMonitoringByVariabilityService = async (divisionId, variable) => {
       division: ObjectId(divisionId),
     }).populate(`${variable}`);
     if (!monitoring) {
-      return {
+      throw {
         status: 404,
         message: "Esta variabilidade nesta subdivisao nao encontrada!",
       };
@@ -154,7 +154,7 @@ const getMonitoringByVariablityAndYearService = async (
       year,
     }).populate(`${variable}`);
     if (!monitoring) {
-      return {
+      throw {
         status: 404,
         message:
           "Esta variabilidade nesta subdivisao neste ano nao encontrada!",
@@ -181,7 +181,7 @@ const inspectDisease = async (division, monitoring, newDisease) => {
     return savedInspection;
   } catch (error) {
     throw {
-      status: "FAILED",
+      throw: error?.status || 500,
       message: "A doenca dos cajueiros nao foi registada",
     };
   }
@@ -199,7 +199,7 @@ const inspectPlague = async (division, monitoring, newPlague) => {
     return savedInspection;
   } catch (error) {
     throw {
-      status: "FAILED",
+      status: error?.status || 500,
       message: "A praga dos cajueiros nao foi registada",
     };
   }
@@ -217,7 +217,7 @@ const inspectPruning = async (division, monitoring, newPruning) => {
     return savedInspection;
   } catch (error) {
     throw {
-      status: "FAILED",
+      status: error?.status || 500,
       message: "A poda dos cajueiros nao foi registada",
     };
   }
@@ -234,7 +234,7 @@ const inspectWeeding = async (division, monitoring, newWeeding) => {
     return savedInspection;
   } catch (error) {
     throw {
-      status: "FAILED",
+      status: error?.status || 500,
       message: "A sacha dos cajueiros nao foi registada",
     };
   }
@@ -251,7 +251,7 @@ const inspectInsecticide = async (division, monitoring, newInsecticide) => {
     return savedInspection;
   } catch (error) {
     throw {
-      status: "FAILED",
+      status: error?.status || 500,
       message: "A insecticide dos cajueiros nao foi registada",
     };
   }
@@ -268,7 +268,7 @@ const inspectFungicide = async (division, monitoring, newFungicide) => {
     return savedInspection;
   } catch (error) {
     throw {
-      status: "FAILED",
+      status: error?.status || 500,
       message: "A fungicida dos cajueiros nao foi registada",
     };
   }
@@ -285,7 +285,7 @@ const inspectHarvest = async (division, monitoring, newHarvest) => {
     return savedInspection;
   } catch (error) {
     throw {
-      status: "FAILED",
+      status: error?.status || 500,
       message: "A colheita dos cajueiros nao foi registada",
     };
   }

@@ -32,20 +32,14 @@ const getFarmers = async (req, res) => {
 
     // let farmers = await getFarmersService();
     if (!farmers) {
-      return res.status(404).send({
-        status: "NOT FOUND",
-        message: "Produtores nao encontrados",
-      });
+      res.status(404);
+      throw new Error("Produtores nao encontrados");
     }
-    return res.status(200).send({
+    return res.status(200).json({
       status: "OK",
       data: farmers,
     });
   } catch (error) {
-    // return res.status(error?.status || 500).send({
-    //   status: "FAILED",
-    //   data: { error: error?.error || error },
-    // });
     res.status(error?.status || 500);
     throw new Error(error.message);
   }
@@ -73,7 +67,7 @@ const addFarmer = async (req, res) => {
 
   try {
     let savedFarmer = await addFarmerService(user.id, body);
-    return res.status(201).send({
+    return res.status(201).json({
       status: "OK",
       data: savedFarmer,
     });
@@ -101,20 +95,14 @@ const getFarmerById = async (req, res) => {
   try {
     const foundFarmer = await getFarmerByIdService(farmerId);
     if (!foundFarmer) {
-      return res.status(404).send({
-        status: "NOT FOUND",
-        message: "Produtor nao encontrado",
-      });
+      res.status(404);
+      throw new Error("Produtor nao encontrado");
     }
-    return res.status(200).send({
+    return res.status(200).json({
       status: "OK",
       data: foundFarmer,
     });
   } catch (error) {
-    // return res.status(error?.status || 500).send({
-    //   status: "FAILED",
-    //   data: { error: error?.error || error },
-    // });
     res.status(error?.status || 500);
     throw new Error(error.message);
   }
@@ -136,12 +124,10 @@ const updateFarmer = async (req, res) => {
   try {
     let updatedFarmer = await updateFarmerService(farmerId, body);
     if (!updatedFarmer) {
-      return res.status(404).send({
-        status: "NOT FOUND",
-        message: "Produtor nao encontrados",
-      });
+      res.status(404);
+      throw new Error("Produtor nao encontrados");
     }
-    return res.status(200).send({
+    return res.status(200).json({
       status: "OK",
       data: updatedFarmer,
     });
@@ -159,10 +145,6 @@ const deleteFarmer = async (req, res) => {
     params: { farmerId },
   } = req;
   if (!farmerId) {
-    // return res.status(400).send({
-    //   status: "FAILED",
-    //   message: "O parametro ':farmerId' nao pode ser vazio",
-    // });
     res.status(400);
     throw new Error("O parametro ':farmerId' nao pode ser vazio");
   }
@@ -170,10 +152,6 @@ const deleteFarmer = async (req, res) => {
     let deletionResult = await deleteFarmerService(farmerId);
     return res.status(204).send(deletionResult);
   } catch (error) {
-    // return res.status(error?.status || 500).send({
-    //   status: "FAILED",
-    //   data: { error: error?.error || error },
-    // });
     res.status(error?.status || 500);
     throw new Error(error.message);
   }

@@ -8,7 +8,7 @@ const getDivisionsService = async (farmlandId) => {
   try {
     let divisions = await Division.find({ farmland: ObjectId(farmlandId) });
     if (!divisions) {
-      return {
+      throw {
         status: 404,
         message: "Subdivisoes nao encontradas!",
       };
@@ -16,7 +16,7 @@ const getDivisionsService = async (farmlandId) => {
     return divisions;
   } catch (error) {
     throw {
-      status: 500,
+      status: error?.status || 500,
       message: error?.message || error,
     };
   }
@@ -26,7 +26,7 @@ const addDivisionService = async (farmlandId, body) => {
   try {
     let farmland = await Farmland.findById(ObjectId(farmlandId));
     if (!farmland) {
-      return {
+      throw {
         status: 404,
         message: "Este pomar nao existe",
       };
@@ -39,7 +39,7 @@ const addDivisionService = async (farmlandId, body) => {
     return farmland;
   } catch (error) {
     throw {
-      status: 500,
+      status: error?.status || 500,
       message: error?.message || error,
     };
   }
@@ -52,7 +52,7 @@ const getOneDivisionService = async (farmlandId, divisionId) => {
       _id: ObjectId(divisionId),
     });
     if (!division) {
-      return {
+      throw {
         status: 404,
         message: "Esta subdivisao de pomar nao existe",
       };
@@ -61,7 +61,7 @@ const getOneDivisionService = async (farmlandId, divisionId) => {
     return division;
   } catch (error) {
     throw {
-      status: 500,
+      status:error?.status || 500,
       message: err.message || error,
     };
   }
@@ -77,7 +77,7 @@ const updateDivisionService = async (divisionId, body) => {
     return updatedDivision;
   } catch (error) {
     throw {
-      status: 500,
+      status: error?.status || 500,
       message: error?.message || error,
     };
   }
@@ -92,14 +92,16 @@ const deleteDivisionService = async (farmlandId, divisionId) => {
     let farmland = await Farmland.findById(farmlandId);
     const divisionIndex = farmland.divisions.indexOf(divisionId);
     if (!farmland || divisionIndex == -1) {
-      return { status: "OK", message: "Subdivisao nao existente!" };
+      throw { status: 404, message: "Subdivisao nao existente!" };
     }
 
     farmland.divisions.splice(divisionIndex, 1);
     await farmland.save();
     return { status: "OK", message: "Subdivisao foi eliminada com sucesso" };
   } catch (error) {
-    throw { status: 500, message: error?.message || error };
+    throw { 
+      status: error?.status || 500, 
+      message: error?.message || error };
   }
 };
 

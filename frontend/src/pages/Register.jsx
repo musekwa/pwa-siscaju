@@ -3,8 +3,16 @@ import { FaUser } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+// import Select from 'react-select';
 import { register, reset } from "../features/auth/authSlice";
 import Spinner from '../components/Spinner'
+
+const selectOptions = [
+  { value: 'Extensionista', label: 'Extensionista'},
+  { value: 'Produtor', label: 'Produtor'},
+  { value: 'Gestor', label: 'Gestor'}
+]
+
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -12,7 +20,7 @@ function Register() {
     email: "",
     password: "",
     password2: "",
-    // role: "",
+    role: "",
   });
 
   const { fullname, email, password, password2, role } = formData;
@@ -44,25 +52,21 @@ function Register() {
   };
 
   const onSubmit = (e) => {
-    e.prevendDefault();
+    e.preventDefault();
     if (password !== password2) {
       toast.error('Password do not match');
     }
-    // else if (
-    //   role !== "Extensionista" ||
-    //   role !== "Produtor" 
-    //   // role !== "Gestor"
-    // ) {
-    //   toast.error("Role not allowed")
-    // }else if (fullname.split(" ").length < 2){
-    //   toast.error("Enter your fullname")
-    // } 
+    else if (role === "") {
+      toast.error("Role not allowed")
+    }else if (fullname.split(" ").length < 2){
+      toast.error("Enter your fullname")
+    } 
     else {
       const userData = {
         fullname,
         email,
         password,
-        // role,
+        role,
       };
       dispatch(register(userData));
     }
@@ -71,7 +75,7 @@ function Register() {
   if (isLoading){
     return <Spinner />
   }
-
+ 
   return (
     <>
       <section className="heading">
@@ -126,16 +130,14 @@ function Register() {
                   onChange={onChange}
                 />
               </div>
-              {/* <div className="form-group">
-                <label>
-                  <select value={role} onChange={onChange}>
-                    <option>Selecionar o seu perfil</option>
-                    <option value="Extensionista">Extensionista</option>
-                    <option value="Produtor">Produtor</option>
-                    <option value="Gestor">Gestor</option>
-                  </select>
-                </label>
-              </div> */}
+              <div className="form-group">
+                <select name="role" value={formData.role} onChange={onChange}>
+                  <option value="">Selecionar o seu perfil</option>
+                  <option value="Extensionista">Extensionista</option>
+                  <option value="Produtor">Produtor</option>
+                  <option value="Gestor">Gestor</option>
+                </select>
+              </div>
               <div className="form-group">
                 <button type="submit" className="btn btn-block">
                   Submit

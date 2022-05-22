@@ -1,16 +1,41 @@
 import { useState, useEffect } from "react";
 import { FaUser } from "react-icons/fa";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { register, reset } from "../features/auth/authSlice";
+import Spinner from '../components/Spinner'
 
 function Register() {
   const [formData, setFormData] = useState({
-    name: "",
+    fullname: "",
     email: "",
     password: "",
     password2: "",
+    // role: "",
   });
 
-  const { name, email, password, password2 } = formData;
+  const { fullname, email, password, password2, role } = formData;
 
+   const { user, isLoading, isError, isSuccess, message } = useSelector(
+     (state) => state.auth
+   );
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  useEffect(()=>{
+    if (isError){
+      toast.error(message)
+    }
+    if (isSuccess || user){
+      navigate('/')
+    }
+    dispatch(reset())
+
+  }, [user, isError, isSuccess, message, navigate, dispatch])
+
+ 
   const onChange = (e) => {
     setFormData((prevState) => ({
       ...prevState,
@@ -20,7 +45,33 @@ function Register() {
 
   const onSubmit = (e) => {
     e.prevendDefault();
+    if (password !== password2) {
+      toast.error('Password do not match');
+    }
+    // else if (
+    //   role !== "Extensionista" ||
+    //   role !== "Produtor" 
+    //   // role !== "Gestor"
+    // ) {
+    //   toast.error("Role not allowed")
+    // }else if (fullname.split(" ").length < 2){
+    //   toast.error("Enter your fullname")
+    // } 
+    else {
+      const userData = {
+        fullname,
+        email,
+        password,
+        // role,
+      };
+      dispatch(register(userData));
+    }
   };
+
+  if (isLoading){
+    return <Spinner />
+  }
+
   return (
     <>
       <section className="heading">
@@ -35,10 +86,10 @@ function Register() {
                 <input
                   type="text"
                   className="form-control"
-                  id="name"
-                  name="name"
-                  value={name}
-                  placeholder="Enter your name"
+                  id="fullname"
+                  name="fullname"
+                  value={fullname}
+                  placeholder="Enter your fullname"
                   onChange={onChange}
                 />
               </div>
@@ -64,7 +115,7 @@ function Register() {
                   onChange={onChange}
                 />
               </div>
-              <div>
+              <div className="form-group">
                 <input
                   type="password"
                   className="form-control"
@@ -75,6 +126,16 @@ function Register() {
                   onChange={onChange}
                 />
               </div>
+              {/* <div className="form-group">
+                <label>
+                  <select value={role} onChange={onChange}>
+                    <option>Selecionar o seu perfil</option>
+                    <option value="Extensionista">Extensionista</option>
+                    <option value="Produtor">Produtor</option>
+                    <option value="Gestor">Gestor</option>
+                  </select>
+                </label>
+              </div> */}
               <div className="form-group">
                 <button type="submit" className="btn btn-block">
                   Submit

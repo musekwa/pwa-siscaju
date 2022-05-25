@@ -1,76 +1,77 @@
 import _ from "lodash";
 import mongoose from "mongoose";
-import Monitoring from "../models/monitoring.model.js";
+import {
+  inspectDivision,
+  getMonitoringService,
+  getMonitoringByYearService,
+  getMonitoringByVariabilityService,
+  getMonitoringByVariablityAndYearService,
+} from "../services/monitoring.services.js";
 
 const ObjectId = mongoose.Types.ObjectId;
 
-// register a new farmland
-const addMonitoring = async (req, res) => {
-  const monitoring = new Monitoring(req.body);
+//@desc 
+//@route 
+//@access
+const addMonitoringByVariability = async (req, res) => {
+  const { body, query, user, } = req;
+
+  if (!query.divisionId || !query.variable) {
+    res.status(400);
+    throw new Error("Indique 'divisionId' e 'variable'!");
+  }
   try {
-    await monitoring.save();
-    return res.status(200).json(monitoring);
-  } catch (err) {
-    return res.status(400).json({
-      message: err.message,
-    });
+    let savedInspection = await inspectDivision(user.id, query, body);
+    return res.status(201).json({ status: "OK", data: savedInspection });
+  } catch (error) {
+    res.status(error?.status || 500);
+    throw new Error(error.message);
   }
 };
 
-// list all registered farmlands
-const getAllMonitorings = async (req, res) => {
-  let monitorings;
+//@desc 
+//@route 
+//@access
+const getMonitorings = async (req, res) => {
+  const {
+    query: { divisionId, variable, year },
+  } = req;
+
+  if (!divisionId) {
+    res.status(400);
+    throw new Error("Deve especificar 'divisionId'!");
+  }
 
   try {
-    monitorings = await Monitoring.find({}, "label geocoordinates");
-    return res.status(200).json(monitorings);
-  } catch (err) {
-    return res.status(400).json({
-      message: err.message,
-    });
+    let monitoring;
+    if (divisionId && !variable && !year) {
+      monitoring = await getMonitoringService(divisionId); // ok
+    } else if (divisionId && !variable && year) {
+      monitoring = await getMonitoringByYearService(divisionId, year); // ok
+    } else if (divisionId && variable && !year) {
+      monitoring = await getMonitoringByVariabilityService(
+        divisionId,
+        variable
+      ); // ok
+    } else if (divisionId && variable && year) {
+      monitoring = await getMonitoringByVariablityAndYearService(
+        divisionId,
+        variable,
+        year
+      ); // ok
+    }
+
+    return res.status(200).json({ status: "OK", data: monitoring });
+  } catch (error) {
+    res.status(error?.status || 500);
+    throw new Error(error.message);
   }
 };
 
-// update an already-registered farmland
-const updateMonitoring = async (req, res) => {
-  const monitoringId = req.params.monitoringId;
-  const { label, geocoordinates } = req.body;
-
-  try {
-    let monitoring = await Monitoring.findOneAndUpdate(
-      { _id: ObjectId(monitoringId) },
-      { label, geocoordinates },
-      { runValidators: true, new: true }
-    );
-
-    return res.status(200).json(monitoring);
-  } catch (err) {
-    return res.status(404).json({
-      message: err.message,
-    });
-  }
-};
-
-// delete a registered farmland
-const deleteMonitoring = async (req, res) => {
-  const monitoringId = req.params.monitoringId;
-  try {
-    let monitoring = await Monitoring.deleteOne({
-      _id: ObjectId(monitoringId),
-    });
-    return res.status(200).json({
-      message: "A monitoria foi eliminada com sucesso",
-    });
-  } catch (err) {
-    return res.status(404).json({
-      message: err.message,
-    });
-  }
-};
-
-export default {
-  addMonitoring,
-  getAllMonitorings,
-  updateMonitoring,
-  deleteMonitoring,
+export {
+  addMonitoringByVariability,
+  // getMonitoringByYear,
+  getMonitorings,
+  // updateMonitoring,
+  // deleteMonitoring,
 };

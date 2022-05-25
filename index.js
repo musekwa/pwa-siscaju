@@ -1,19 +1,21 @@
 import config from "./config/config.js";
-import server from "./server/server.js";
-const {
+import {
   app,
   userRoutes,
   farmerRoutes,
   farmlandRoutes,
-  farmDivisionRoutes,
+  divisionRoutes,
   monitoringRoutes,
-} = server;
+  errorHandler,
+}  from "./server/server.js";
 
 app.use(userRoutes);
 app.use(farmerRoutes);
 app.use(farmlandRoutes);
-// app.use(farmDivisionRoutes);
+app.use(divisionRoutes);
 app.use(monitoringRoutes);
+
+app.use(errorHandler)
 
 app.get("/", (req, res) => {
   res.sendFile("index.html");

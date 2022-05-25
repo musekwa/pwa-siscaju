@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 var Schema = mongoose.Schema;
 
-const farmDivisionsSchema = mongoose.Schema(
+const divisionsSchema = mongoose.Schema(
   {
     trees: Number,
     sowingYear: Number,
@@ -14,6 +14,14 @@ const farmDivisionsSchema = mongoose.Schema(
           values: ["regular", "irregular"],
           message: "{VALUE} nao e uma categoria permitida",
         },
+        default: function(){
+          if (this.spacing.x === this.spacing.y){
+            return "regular"
+          }
+          else {
+            return "irregular";
+          }
+        }
       },
     },
     plantingTechniques: [String],
@@ -32,6 +40,6 @@ const farmDivisionsSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-const FarmDivision = mongoose.model("FarmDivision", farmDivisionsSchema);
+const Division = mongoose.model("Division", divisionsSchema);
 
-export default FarmDivision;
+export default Division;

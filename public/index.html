@@ -60,11 +60,30 @@
         <p><strong>1. CRUD para utilizadores do SisCaju:</strong></p>
         <table style="width: 100%">
           <tr>
-            <th>Método</th>
+            <th>Operation name</th>
+            <th>Method</th>
             <th>Endpoint</th>
-            <th>Descrição</th>
+            <th>Query values</th>
+            <th>Description</th>
           </tr>
+
           <tr>
+            <td>login()</td>
+            <td>POST</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/login"
+                target="_blank"
+                style="text-decoration: none"
+                >/login</a
+              >
+            </td>
+            <td>N/A</td>
+            <td></td>
+          </tr>
+
+          <tr>
+            <td>getUsers()</td>
             <td>GET</td>
             <td>
               <a
@@ -74,9 +93,27 @@
                 >/users</a
               >
             </td>
-            <td>Leitura de todos os utilizadores já registados</td>
+            <td>N/A</td>
+            <td></td>
           </tr>
+
           <tr>
+            <td>getUsers()</td>
+            <td>GET</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/users"
+                target="_blank"
+                style="text-decoration: none"
+                >/users</a
+              >
+            </td>
+            <td>role | province | district | admin-post</td>
+            <td></td>
+          </tr>
+
+          <tr>
+            <td>addUser()</td>
             <td>POST</td>
             <td>
               <a
@@ -86,10 +123,13 @@
                 >/users</a
               >
             </td>
-            <td>Registo de um novo utilizador</td>
+            <td>N/A</td>
+            <td></td>
           </tr>
+
           <tr>
-            <td>UPDATE</td>
+            <td>getUserById()</td>
+            <td>GET</td>
             <td>
               <a
                 href="https://pwa-siscaju.herokuapp.com/users/:userId"
@@ -98,9 +138,27 @@
                 >/users/:userId</a
               >
             </td>
-            <td>Atualização de um utilizador já registado</td>
+            <td>N/A</td>
+            <td></td>
           </tr>
+
           <tr>
+            <td>updateUser()</td>
+            <td>PATCH</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/users/:userId"
+                target="_blank"
+                style="text-decoration: none"
+                >/users/:userId</a
+              >
+            </td>
+            <td>N/A</td>
+            <td></td>
+          </tr>
+
+          <tr>
+            <td>deleteUser()</td>
             <td>DELETE</td>
             <td>
               <a
@@ -110,21 +168,28 @@
                 >/users/:userId</a
               >
             </td>
-            <td>Eliminação de um utilizador já registado</td>
+            <td>N/A</td>
+            <td></td>
           </tr>
         </table>
       </div>
+
       <br />
       <hr />
+
       <div>
         <p><strong>2. CRUD para produtores do caju:</strong></p>
         <table style="width: 100%">
           <tr>
-            <th>Método</th>
+            <th>Operation name</th>
+            <th>Method</th>
             <th>Endpoint</th>
-            <th>Descrição</th>
+            <th>Query values</th>
+            <th>Description</th>
           </tr>
+
           <tr>
+            <td>getFarmers()</td>
             <td>GET</td>
             <td>
               <a
@@ -134,9 +199,27 @@
                 >/farmers</a
               >
             </td>
-            <td>Leitura de todos os produtores já registados</td>
+            <td>N/A</td>
+            <td></td>
           </tr>
+
           <tr>
+            <td>getFarmers()</td>
+            <td>GET</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/farmers"
+                target="_blank"
+                style="text-decoration: none"
+                >/farmers</a
+              >
+            </td>
+            <td>category | province | district | admin-post</td>
+            <td></td>
+          </tr>
+
+          <tr>
+            <td>addFarmer()</td>
             <td>POST</td>
             <td>
               <a
@@ -146,10 +229,13 @@
                 >/farmers</a
               >
             </td>
-            <td>Registo de um novo produtor</td>
+            <td>N/A</td>
+            <td></td>
           </tr>
+
           <tr>
-            <td>GET</td>
+            <td>getFarmerById()</td>
+            <td>POST</td>
             <td>
               <a
                 href="https://pwa-siscaju.herokuapp.com/farmers/:farmerId"
@@ -158,39 +244,45 @@
                 >/farmers/:farmerId</a
               >
             </td>
-            <td>Leitura de um produtor, usando o seu ID como parâmetro</td>
+            <td>N/A</td>
+            <td></td>
           </tr>
+
           <tr>
-            <td>UPDATE</td>
+            <td>updateFarmer()</td>
+            <td>PATCH</td>
             <td>
               <a
-                href="https://pwa-siscaju.herokuapp.com/users"
+                href="https://pwa-siscaju.herokuapp.com/farmers/:farmerId"
                 target="_blank"
                 style="text-decoration: none"
                 >/farmers/:farmerId</a
               >
             </td>
-            <td>
-              Atualização de dados de um produtor, usando o seu ID como
-              parâmetro
-            </td>
+            <td>N/A</td>
+            <td></td>
           </tr>
+
           <tr>
+            <td>deleteFarmer()</td>
             <td>DELETE</td>
             <td>
               <a
-                href="https://pwa-siscaju.herokuapp.com/users/:userId"
+                href="https://pwa-siscaju.herokuapp.com/farmers/:farmerId"
                 target="_blank"
                 style="text-decoration: none"
                 >/farmers/:farmerId</a
               >
             </td>
-            <td>Eliminação de um produtor já registado</td>
+            <td>N/A</td>
+            <td></td>
           </tr>
         </table>
       </div>
+
       <br />
       <hr />
+
       <div>
         <p>
           <strong
@@ -199,11 +291,15 @@
         </p>
         <table style="width: 100%">
           <tr>
-            <th>Método</th>
+            <th>Operation name</th>
+            <th>Method</th>
             <th>Endpoint</th>
-            <th>Descrição</th>
+            <th>Query values</th>
+            <th>Description</th>
           </tr>
+
           <tr>
+            <td>getFarmlands()</td>
             <td>GET</td>
             <td>
               <a
@@ -213,9 +309,45 @@
                 >/farmlands</a
               >
             </td>
-            <td>Leitura de todos os pomares já registados</td>
+            <td>N/A</td>
+            <td></td>
           </tr>
+
           <tr>
+            <td>getFarmlands()</td>
+            <td>GET</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/farmlands"
+                target="_blank"
+                style="text-decoration: none"
+                >/farmlands</a
+              >
+            </td>
+            <td>
+              farmerId | farmlandId | farmerId & farmlandId | province |
+              district | admin-post | cashew-trees-number
+            </td>
+            <td></td>
+          </tr>
+
+          <tr>
+            <td>addFarmland()</td>
+            <td>POST</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/farmlands"
+                target="_blank"
+                style="text-decoration: none"
+                >/farmlands</a
+              >
+            </td>
+            <td>farmerId</td>
+            <td></td>
+          </tr>
+
+          <tr>
+            <td>getFarmlandById()</td>
             <td>GET</td>
             <td>
               <a
@@ -225,152 +357,138 @@
                 >/farmlands/:farmlandId</a
               >
             </td>
-            <td>Leitura de um pomar, usando o ID do pomar como parâmetro.</td>
-          </tr>
-          <tr>
-            <td>GET</td>
-            <td>
-              <a
-                href="https://pwa-siscaju.herokuapp.com/farmlands/:farmerId"
-                target="_blank"
-                style="text-decoration: none"
-                >/farmlands/:farmerId</a
-              >
-            </td>
-            <td>
-              Leitura dos pomares pertencendo ao produtor, usando o ID do
-              produtor como parâmetro
-            </td>
-          </tr>
-          <tr>
-            <td>POST</td>
-            <td>
-              <a
-                href="https://pwa-siscaju.herokuapp.com/farmlands/:farmerId"
-                target="_blank"
-                style="text-decoration: none"
-                >/farmlands/:farmerId</a
-              >
-            </td>
-            <td>
-              Registo do pomar pertencendo ao produtor, usando o ID do produtor
-              como parâmetro
-            </td>
-          </tr>
-          <tr>
-            <td>UPDATE</td>
-            <td>
-              <a
-                href="https://pwa-siscaju.herokuapp.com/users/:userId"
-                target="_blank"
-                style="text-decoration: none"
-                >/farmlands/:farmlandId/:farmerId</a
-              >
-            </td>
-            <td>
-              Atualização de um pomar específico de um produtor específico,
-              ambos identificados pelo ID do pomar e ID do produtor como
-              parâmetros respetivamente.
-            </td>
-          </tr>
-          <tr>
-            <td>DELETE</td>
-            <td>
-              <a
-                href="https://pwa-siscaju.herokuapp.com/farmlands/:userId"
-                target="_blank"
-                style="text-decoration: none"
-                >/farmlands/:farmlandId/:farmerId</a
-              >
-            </td>
-            <td>
-              Eliminação de um pomar específico de um produtor específico,
-              identificados pelo ID do pomar e ID do produtor como parâmetros.
-            </td>
+            <td>N/A</td>
+            <td></td>
           </tr>
 
           <tr>
-            <td>GET</td>
-            <td>
-              <a
-                href="https://pwa-siscaju.herokuapp.com/farmlands/:farmlandId/divisions"
-                target="_blank"
-                style="text-decoration: none"
-                >/farmlands/:farmlandId/divisions</a
-              >
-            </td>
-            <td>
-              Leitura de todas as subdivisões do pomar identificado pelo ID do
-              pomar como parâmetro.
-            </td>
-          </tr>
-
-          <tr>
-            <td>POST</td>
-            <td>
-              <a
-                href="https://pwa-siscaju.herokuapp.com/farmlands/:farmlandId/divisions"
-                target="_blank"
-                style="text-decoration: none"
-                >/farmlands/:farmlandId/divisions</a
-              >
-            </td>
-            <td>
-              Registo de uma nova subdivisão do pomar identificado pelo ID do
-              pomar como parâmetro.
-            </td>
-          </tr>
-
-          <tr>
-            <td>GET</td>
-            <td>
-              <a
-                href="https://pwa-siscaju.herokuapp.com/farmlands/:farmlandId/divisions/:divisionId"
-                target="_blank"
-                style="text-decoration: none"
-                >/farmlands/:farmlandId/divisions/:divisionId</a
-              >
-            </td>
-            <td>
-              Leitura de uma divisão de o pomar específico identificados pelo ID
-              do pomar e ID da divisão do pomar como parâmetros.
-            </td>
-          </tr>
-          <tr>
+            <td>updateFarmland()</td>
             <td>PATCH</td>
             <td>
               <a
-                href="https://pwa-siscaju.herokuapp.com/farmlands/:farmlandId/divisions/:divisionId"
+                href="https://pwa-siscaju.herokuapp.com/farmlands/:farmlandId"
                 target="_blank"
                 style="text-decoration: none"
-                >/farmlands/:/farmlandId/divisions/:divisionId</a
+                >/farmlands/:farmlandId</a
               >
             </td>
-            <td>
-              Atualização de uma divisão de o pomar específico identificados
-              pelo ID do pomar e ID da divisão do pomar como parâmetros.
-            </td>
+            <td>N/A</td>
+            <td></td>
           </tr>
+
           <tr>
+            <td>deleteFarmland()</td>
             <td>DELETE</td>
             <td>
               <a
-                href="https://pwa-siscaju.herokuapp.com/farmlands/:farmlandId/divisions/:divisionId"
+                href="https://pwa-siscaju.herokuapp.com/farmlands/:farmlandId"
                 target="_blank"
                 style="text-decoration: none"
-                >/farmlands/:/farmlandId/divisions/:divisionId</a
+                >/farmlands/:farmlandId</a
               >
             </td>
-            <td>
-              Eliminação de uma divisão de o pomar específico identificados pelo
-              ID do pomar e ID da divisão do pomar como parâmetros.
-            </td>
+            <td>N/A</td>
+            <td></td>
           </tr>
         </table>
       </div>
 
       <br />
       <hr />
+
+      <div>
+        <p>
+          <strong>3. CRUD para as subdivisões do pomar:</strong>
+        </p>
+        <table style="width: 100%">
+          <tr>
+            <th>Operation name</th>
+            <th>Method</th>
+            <th>Endpoint</th>
+            <th>Query values</th>
+            <th>Description</th>
+          </tr>
+
+          <tr>
+            <td>getDivisions()</td>
+            <td>GET</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/farmlands/:farmlandId/divisions"
+                target="_blank"
+                style="text-decoration: none"
+                >/farmlands/:farmlandId/divisions</a
+              >
+            </td>
+            <td>N/A</td>
+            <td></td>
+          </tr>
+
+          <tr>
+            <td>getDivisions()</td>
+            <td>GET</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/farmlands/:farmlandId/divisions"
+                target="_blank"
+                style="text-decoration: none"
+                >/farmlands/:farmlandId/divisions</a
+              >
+            </td>
+            <td>divisionId</td>
+            <td></td>
+          </tr>
+
+          <tr>
+            <td>addDivision()</td>
+            <td>POST</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/farmlands/:farmlandId/divisions"
+                target="_blank"
+                style="text-decoration: none"
+                >/farmlands/:farmlandId/divisions</a
+              >
+            </td>
+            <td>N/A</td>
+            <td></td>
+          </tr>
+
+          <tr>
+            <td>updateDivision()</td>
+            <td>PATCH</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/farmlands/:farmlandId/divisions"
+                target="_blank"
+                style="text-decoration: none"
+                >/farmlands/:farmlandId/divisions</a
+              >
+            </td>
+            <td>divisionId</td>
+            <td></td>
+          </tr>
+
+          <tr>
+            <td>deleteDivision()</td>
+            <td>DELETE</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/farmlands/:farmlandId/divisions"
+                target="_blank"
+                style="text-decoration: none"
+                >/farmlands/:farmlandId/divisions</a
+              >
+            </td>
+            <td>divisionId</td>
+            <td></td>
+          </tr>
+        </table>
+      </div>
+
+      <br />
+      <hr />
+
       <div>
         <p>
           <strong
@@ -379,17 +497,142 @@
         </p>
         <table style="width: 100%">
           <tr>
-            <th>Método</th>
+            <th>Operation name</th>
+            <th>Method</th>
             <th>Endpoint</th>
-            <th>Descrição</th>
+            <th>Query values</th>
+            <th>Description</th>
           </tr>
+
           <tr>
-            <td>A definir</td>
-            <td>A definir</td>
-            <td>A definir</td>
+            <td>addMonitoringByVariability()</td>
+            <td>POST</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/monitorings"
+                target="_blank"
+                style="text-decoration: none"
+                >/monitorings</a
+              >
+            </td>
+            <td>divisionId & variable</td>
+            <td></td>
           </tr>
+
+          <tr>
+            <td>getMonitorings()</td>
+            <td>GET</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/monitorings"
+                target="_blank"
+                style="text-decoration: none"
+                >/monitorings</a
+              >
+            </td>
+            <td>divisionId</td>
+            <td></td>
+          </tr>
+
+          <tr>
+            <td>getMonitorings()</td>
+            <td>GET</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/monitorings"
+                target="_blank"
+                style="text-decoration: none"
+                >/monitorings</a
+              >
+            </td>
+            <td>divisionId & year</td>
+            <td></td>
+          </tr>
+
+          <tr>
+            <td>getMonitorings()</td>
+            <td>GET</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/monitorings"
+                target="_blank"
+                style="text-decoration: none"
+                >/monitorings</a
+              >
+            </td>
+            <td>divisionId & variable</td>
+            <td></td>
+          </tr>
+
+          <tr>
+            <td>getMonitorings()</td>
+            <td>GET</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/monitorings"
+                target="_blank"
+                style="text-decoration: none"
+                >/monitorings</a
+              >
+            </td>
+            <td>divisionId & variable & year</td>
+            <td></td>
+          </tr>
+
         </table>
       </div>
+
+      <br>
+      <hr>
+
+      
+      <div>
+        <p>
+          <strong
+            >3. CRUD para desempenhos dos utilizadores (extensionistas):</strong
+          >
+        </p>
+        <table style="width: 100%">
+          <tr>
+            <th>Operation name</th>
+            <th>Method</th>
+            <th>Endpoint</th>
+            <th>Query values</th>
+            <th>Description</th>
+          </tr>
+
+          <tr>
+            <td>getPerformances()</td>
+            <td>GET</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/performances"
+                target="_blank"
+                style="text-decoration: none"
+                >/performances</a
+              >
+            </td>
+            <td>N/A</td>
+            <td></td>
+          </tr>
+                    <tr>
+            <td>getPerformances()</td>
+            <td>GET</td>
+            <td>
+              <a
+                href="https://pwa-siscaju.herokuapp.com/performances"
+                target="_blank"
+                style="text-decoration: none"
+                >/performances</a
+              >
+            </td>
+            <td>farmers | farmlands | monitorings</td>
+            <td></td>
+          </tr>
+
+        </table>
+      </div>
+
     </div>
 
     <!-- <script type="text/javascript" src="main.js"></script> -->

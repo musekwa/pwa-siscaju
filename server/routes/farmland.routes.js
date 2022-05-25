@@ -1,59 +1,19 @@
-import express from "express";
-import farmlandController from "../controllers/farmland.controllers.js";
-import farmDivisionController from "../controllers/farmDivision.controllers.js";
-
-const {
-  getAllFarmlands,
-  getFarmlandById,
-  getFarmlandsByFarmerId,
+import router from "./index.js";
+import {
+  getFarmlands,
   addFarmland,
+  getFarmlandById,
   updateFarmland,
   deleteFarmland,
-} = farmlandController;
+} from "../controllers/farmland.controllers.js";
+import { protect } from "../middleware/authMiddleware.js";
 
-const {
-  getFarmlandDivisions,
-  getFarmlandDivision,
-  addFarmlandDivision,
-  updateFarmlandDivision,
-  deleteFarmlandDivision,
-} = farmDivisionController;
-
-const router = express.Router();
-
-// retriving all the farmlands
-router.route("/farmlands").get(getAllFarmlands);
-
-/**
- * Creating a farmland is by farmer's id
- * retrieving farmlands by farmer's id
- * */
-router
-  .route("/farmlands/:farmerId")
-  .get(getFarmlandsByFarmerId)
-  .post(addFarmland);
-
-router.route("/farmlands/:farmlandId").get(getFarmlandById);
-
-/**
- * Updating and deleting a farmland is only allowed
- * if both the owner (farmer)'s and farmland's ids
- * are provided!
- */
-router
-  .route("/farmlands/:farmlandId/:farmerId")
-  .put(updateFarmland)
-  .delete(deleteFarmland);
+router.route("/farmlands").post(protect, addFarmland).get(protect, getFarmlands);
 
 router
-  .route("/farmlands/:farmlandId/divisions")
-  .get(getFarmlandDivisions)
-  .post(addFarmlandDivision);
-
-router
-  .route("/farmlands/:farmlanId/divisions/:divisionId")
-  .get(getFarmlandDivision)
-  .patch(updateFarmlandDivision)
-  .delete(deleteFarmlandDivision);
+  .route("/farmlands/:farmlandId")
+  .get(protect, getFarmlandById)
+  .patch(protect, updateFarmland)
+  .delete(protect, deleteFarmland);
 
 export default router;

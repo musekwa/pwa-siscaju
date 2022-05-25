@@ -2,119 +2,154 @@ import _ from "lodash";
 import mongoose from "mongoose";
 import Farmer from "../models/farmer.model.js";
 import Farmland from "../models/farmland.model.js";
+import {
+  getFarmlandsByFarmerIdService,
+  addFarmlandService,
+  getFarmlandsService,
+  getOneFarmlandByFarmerIdService,
+  getFarmlandByFarmlandIdService,
+  updateFarmlandService,
+  deleteFarmlandService,
+} from "../services/farmland.services.js";
 
 const ObjectId = mongoose.Types.ObjectId;
 
-/**
- * 1. registering a new farmland;
- * 2. pushing the farmland's id to the farmer's farmland property
- * 3. referencing the farmer in the farmland's document
- */
+//@desc
+//@route
+//@access
 const addFarmland = async (req, res) => {
+  const {
+    body,
+    query: { farmerId },
+    user,
+  } = req;
 
-  const farmerId = ObjectId(req.params.farmerId);
-  let farmland = new Farmland(req.body);
+  if (!farmerId || !body) {
+    res.status(400);
+    throw new Error(
+      "Deve indicar ou o parametro 'farmerId' ou dados do pomar!"
+    );
+  }
+  try {
+    let savedFarmland = await addFarmlandService(user.id, farmerId, body);
+    return res.status(201).json({
+      status: "OK",
+      data: { farmer: savedFarmland.farmer, farmland: savedFarmland.farmland },
+    });
+  } catch (error) {
+    res.status(error?.status || 500);
+    throw new Error(error.message);
+  }
+};
+
+//@desc
+//@route
+//@access
+const getFarmlands = async (req, res) => {
+  const {
+    query: { farmerId, farmlandId },
+    user,
+  } = req;
 
   try {
-    let farmer = await Farmer.findById(farmerId);
-    if (!farmer){
-      return res.json({ message: "Este produtor nao existe"})
+    let farmlands;
+    if (!farmerId && !farmlandId) {
+      // get all registered farmlands
+      farmlands = await getFarmlandsService();
+    } else if (farmerId && !farmlandId) {
+      // get all farmlands belonging to the farmerId's owner
+      farmlands = await getFarmlandsByFarmerIdService(farmerId);
+    } else if (farmerId && farmlandId) {
+      // get one farmland by farmlandId and farmerId
+      farmlands = await getOneFarmlandByFarmerIdService(farmerId, farmlandId);
+    }
+    if (!farmlands) {
+      res.status(404);
+      throw new Error("Pomares nao encontrados!");
+    }
+    return res.status(200).json({
+      status: "OK",
+      data: farmlands,
+    });
+  } catch (error) {
+    res.status(error?.status || 500);
+    throw new Error(error.message);
+  }
+};
+
+//@desc
+//@route
+//@access
+const getFarmlandById = async (req, res) => {
+  const {
+    params: { farmlandId },
+  } = req;
+  try {
+    let foundFarmland = await getFarmlandByFarmlandIdService(farmlandId);
+    return res.status(200).json({ status: "OK", data: foundFarmland });
+  } catch (error) {
+    res.status(error?.status || 500);
+    throw new Error(error.message);
+  }
+};
+
+//@desc
+//@route
+//@access
+const updateFarmland = async (req, res) => {
+  const {
+    body,
+    params: { farmlandId },
+  } = req;
+
+  if (!farmlandId) {
+    res.status(400);
+    throw new Error("Deve especificar 'farmerId' e 'farmlandId'");
+  }
+
+  try {
+    let updatedFarmland = await updateFarmlandService(farmlandId, body);
+    if (!updatedFarmland) {
+      res.status(404);
+      throw new Error("Pomar nao econtrado");
     }
 
-    farmer.farmlands.push(farmland)
-    farmer = await farmer.save()
-    farmland.farmer = farmer
-    farmland = await farmland.save()
-    return res.status(200).json(farmer)
-  } catch (err) {
-    return res.json({
-      message: err.message,
-    });
+    return res.status(200).json({ status: "OK", data: updatedFarmland });
+  } catch (error) {
+    res.status(error?.status || 500);
+    throw new Error(error.message);
   }
 };
 
-// get all the farmer's farmlands by farmerId
-const getFarmlandsByFarmerId = async (req, res) => {
-  const farmerId = ObjectId(req.params.farmerId);
-
-  try {
-    const farmlands = await Farmland.find({ farmer: (farmerId)});
-    return res.status(200).json(farmlands);
-  } catch (err) {
-    return res.status(400).json({
-      message: err.message,
-    });
-  }
-};
-
-// get a famrland by Id and its subdivisions
-const getFarmlandById = async (req, res) => {
-  let farmland;
-  const farmlandId = ObjectId(req.params.farmlandId);
-  try {
-    farmland = await Farmland.findById(farmlandId).populate('farmDivisions');
-    return res.status(200).json(farmland);
-  } catch (err) {
-    return res.status(400).json({
-      message: err.message,
-    });
-  }
-};
-
-// list all registered farmlands
-const getAllFarmlands = async (req, res) => {
-  let farmlands;
-
-  try {
-    farmlands = await Farmland.find({}, "label area geocoordinates farmDivisions");
-    return res.status(200).json(farmlands);
-  } catch (err) {
-    return res.status(400).json({
-      message: err.message,
-    });
-  }
-};
-
-// update an already-registered farmland
-const updateFarmland = async (req, res) => {
-  const farmlandId = req.params.farmlandId;
-  const { label, geocoordinates } = req.body;
-
-  try {
-    let farmland = await Farmland.findOneAndUpdate(
-      { _id: ObjectId(farmlandId) },
-      { label, geocoordinates },
-      { runValidators: true, new: true }
-    );
-
-    return res.status(200).json(farmland);
-  } catch (err) {
-    return res.status(404).json({
-      message: err.message,
-    });
-  }
-};
-
-// delete a registered farmland
+//@desc
+//@route
+//@access
 const deleteFarmland = async (req, res) => {
-  const farmlandId = req.params.farmlandId;
+  const {
+    params: { farmlandId },
+    query: { farmerId },
+  } = req;
+
+  if (!farmerId || !farmlandId) {
+    res.status(400);
+    throw new Error("Deve especificar 'farmerId' e 'farmlandId'");
+  }
+
   try {
-    let farmland = await Farmland.deleteOne({ _id: ObjectId(farmlandId) });
-    return res.status(200).json({
-      message: "O pomar foi eliminado com sucesso",
-    });
-  } catch (err) {
-    return res.status(404).json({
-      message: err.message,
-    });
+    let deletionResult = await deleteFarmlandService(farmerId, farmlandId);
+    return res
+      .status(204)
+      .json({ status: "OK", message: "Pomar eliminado", data: deletionResult });
+  } catch (error) {
+    res.status(error?.status || 500);
+    throw new Error(error.message);
   }
 };
 
-export default {
+export {
   addFarmland,
-  getFarmlandsByFarmerId,
+  getFarmlands,
   getFarmlandById,
-  getAllFarmlands,
   updateFarmland,
   deleteFarmland,
 };

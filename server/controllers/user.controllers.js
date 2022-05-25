@@ -1,97 +1,188 @@
-import User from "../models/user.model.js";
+import {
+  loginService,
+  getUsersService,
+  getUsersByRoleService,
+  addUserService,
+  getUserByIdService,
+  updateUserService,
+  deleteUserService,
+} from "../services/user.services.js";
 import _ from "lodash";
-import mongoose from "mongoose";
+import expressValidator from "express-validator";
+import jwt from "jsonwebtoken";
+import { generateToken } from "../middleware/authMiddleware.js";
+const { body, validationResult } = expressValidator;
 
-const ObjectId = mongoose.Types.ObjectId;
 
-/**
- * user coontrollers:
- * 1. addUser: registers a new user
- * 2. getUserById:
- * 4. getAllUsers: list all the users
- * 4. updateUser: update some user's fields
- * 5. deleteUser: delete the user
- */
 
-// register a new user
-const addUser = async (req, res) => {
-  const user = new User(req.body);
+//@desc login
+//@route
+//@access
+const login = async (req, res, next) => {
+  const { body } = req;
+
+  if (!body.email || !body.password) {
+    res.status(400);
+    throw new Error("Deve especificar 'email' e 'password'!");
+  }
+
   try {
-    await user.save();
-    return res.status(200).json(user);
-  } catch (err) {
-    return res.status(400).json({
-      message: err.message,
+    let user = await loginService(body);
+
+    const {
+      fullname, address, email, role, _id, createdAt
+    } = user
+
+    return res.status(201).json({
+        fullname, address, email, role, _id, createdAt,
+        // ...user._doc,
+        token: generateToken(user._id),
     });
+  } catch (error) {
+    res.status(error?.status || 500);
+    throw new Error(error.message);
   }
 };
 
-// get user by ID
-const getUserById = async (req, res) => {
-  let user;
-  const userId = req.params.userId;
-  try {
-    user = await User.find(
-      { _id: ObjectId(userId) },
-      "_id fullname email role address.district"
-    );
-    return res.status(200).json(user);
-  } catch (err) {
-    return res.status(400).json({
-      message: err.message,
-    });
-  }
-};
-
-// get all registered users
-const getAllUsers = async (req, res) => {
-  let users;
+//@desc
+//@route
+//@access
+const getUsers = async (req, res) => {
+  const {
+    query: { role },
+    user,
+  } = req;
 
   try {
-    users = await User.find(
-      {},
-      "_id fullname email role address.district"
-    );
-    return res.status(200).json(users);
-  } catch (err) {
-    return res.status(400).json({
-      message: err.message,
-    });
-  }
-};
+    let users;
+    if (role) {
+      users = await getUsersByRoleService(role);
+    } else {
+      users = await getUsersService();
+    }
 
-// update an already-registered user
-const updateUser = async (req, res) => {
-  const userId = req.params.userId;
-  const { name, role } = req.body;
-
-  try {
-    let user = await User.findOneAndUpdate(
-      { _id: ObjectId(userId) },
-      { name, role },
-      { runValidators: true, new: true }
-    );
-    return res.status(200).json(user);
-  } catch (err) {
-    return res.status(404).json({
-      message: err.message,
-    });
-  }
-};
-
-// delete a registered user
-const deleteUser = async (req, res) => {
-  const userId = req.params.userId;
-  try {
-    let user = await User.deleteOne({ _id: ObjectId(userId) });
+    if (!users) {
+      res.status(404);
+      throw new Error("Utilizadores nao encontrados");
+    }
+    
     return res.status(200).json({
-      message: "O utilizador foi eliminado com sucesso",
+      status: "OK",
+      data: users,
     });
-  } catch (err) {
-    return res.status(404).json({
-      message: err.message,
-    });
+  } catch (error) {
+    res.status(error?.status || 500);
+    throw new Error(error.message);
   }
 };
 
-export default { addUser, getUserById, getAllUsers, updateUser, deleteUser };
+//@desc
+//@route
+//@access
+const addUser = async (req, res) => {
+  const { body } = req;
+  if (!body.fullname || !body.email || !body.password || !body.role) {
+    res.status(400);
+    throw new Error(
+      "Alguns campos de dados obrigatorios sao vazios: fullname, email, password, roleI!"
+    );
+  }
+
+  try {
+    let savedUser = await addUserService(body);
+
+    const {
+      fullname, address, email, role, _id, createdAt
+    } = savedUser;
+
+    return res.status(201).json({
+        // ...savedUser._doc,
+        fullname, address, email, role, _id, createdAt,
+        token: generateToken(savedUser._id),
+    });
+  } catch (error) {
+    res.status(error?.status || 500);
+    throw new Error(error.message);
+  }
+};
+
+//@desc
+//@route
+//@access
+const getUserById = async (req, res) => {
+  const {
+    params: { userId },
+  } = req;
+  if (!userId) {
+    res.status(400);
+    throw new Error("O parametro ':userId' nao pode ser vazio");
+  }
+  try {
+    let foundUser = await getUserByIdService(userId);
+    if (!foundUser) {
+      res.status(404);
+      throw new Error("Utilizador nao encontrado");
+    }
+    res.status(200).json({
+      status: "OK",
+      data: foundUser,
+    });
+  } catch (error) {
+    res.status(error?.status || 500);
+    throw new Error(error.message);
+  }
+};
+
+//@desc
+//@route
+//@access
+const updateUser = async (req, res) => {
+  const {
+    body,
+    params: { userId },
+  } = req;
+
+  if (!userId) {
+    res.status(400);
+    throw new Error("O parametro ':userId' nao pode ser vazio");
+  }
+
+  try {
+    let updatedUser = await updateUserService(userId, body);
+    if (!updatedUser) {
+      res.status(404);
+      throw new Error("Utilizador nao encontrado");
+    }
+    res.status(200).json({
+      status: "OK",
+      data: updatedUser,
+    });
+  } catch (error) {
+    res.status(error?.status || 500);
+    throw new Error(error.message);
+  }
+};
+
+//@desc
+//@route
+//@access
+const deleteUser = async (req, res) => {
+  const {
+    params: { userId },
+  } = req;
+
+  if (!userId) {
+    res.status(400);
+    throw new Error("O parametro ':userId' nao pode ser vazio");
+  }
+
+  try {
+    let deletionResult = await deleteUserService(userId);
+    res.status(204).json({ status: "OK", message: "Utilizador eliminado", data: deletionResult });
+  } catch (err) {
+    res.status(error?.status || 500);
+    throw new Error(error.message);
+  }
+};
+
+export { login, addUser, getUserById, getUsers, updateUser, deleteUser };

@@ -1,19 +1,23 @@
-import express from "express";
-import userController from "../controllers/user.controllers.js";
+import router from "./index.js";
+import {
+  login,
+  getUsers,
+  getUserById,
+  addUser,
+  updateUser,
+  deleteUser,
+} from "../controllers/user.controllers.js";
+import { body } from 'express-validator'
+import { protect } from "../middleware/authMiddleware.js"
 
-const { getAllUsers, getUserById, addUser, updateUser, deleteUser } = userController
+router.route("/login").post(login);
 
-const router = express.Router();
-
-router
-  .route("/users")
-  .get(getAllUsers)
-  .post(addUser);
+router.route("/users").get(protect, getUsers).post(addUser);
 
 router
   .route("/users/:userId")
-  .get(getUserById)
-  .put(updateUser)
-  .delete(deleteUser);
+  .get(protect, getUserById)
+  .patch(protect, updateUser)
+  .delete(protect, deleteUser);
 
 export default router;

@@ -1,26 +1,21 @@
-import express from "express";
-import farmerController from "../controllers/farmer.controllers.js";
-
-const {
+import router from "./index.js";
+import {
   addFarmer,
-  getAllFarmers,
+  getFarmers,
   getFarmerById,
   updateFarmer,
   deleteFarmer,
-  // getFarmerAndFarmlands,
-} = farmerController;
+} from "../controllers/farmer.controllers.js";
+import { protect } from '../middleware/authMiddleware.js'
 
-const router = express.Router();
-
-router
-  .route("/farmers")
-  .get(getAllFarmers)
-  .post(addFarmer);
+router.route("/farmers").post(protect, addFarmer).get(protect, getFarmers);
 
 router
   .route("/farmers/:farmerId")
-  .get(getFarmerById)
-  .put(updateFarmer)
-  .delete(deleteFarmer);
+  .get(protect, getFarmerById)
+  .patch(protect, updateFarmer)
+  .delete(protect, deleteFarmer);
+
+router;
 
 export default router;

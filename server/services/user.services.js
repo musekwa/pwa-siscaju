@@ -2,7 +2,6 @@ import User from "../models/user.model.js";
 import mongoose from "mongoose";
 // import jwt from "jsonwebtoken";
 
-
 const ObjectId = mongoose.Types.ObjectId;
 
 const loginService = async (body)=>{

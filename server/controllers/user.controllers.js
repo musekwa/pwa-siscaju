@@ -12,13 +12,14 @@ import expressValidator from "express-validator";
 import jwt from "jsonwebtoken";
 import { generateToken } from "../middleware/authMiddleware.js";
 const { body, validationResult } = expressValidator;
+import asyncHandler from 'express-async-handler'
 
 
 
 //@desc login
 //@route
 //@access
-const login = async (req, res, next) => {
+const login = asyncHandler (async (req, res) => {
   const { body } = req;
 
   if (!body.email || !body.password) {
@@ -26,7 +27,7 @@ const login = async (req, res, next) => {
     throw new Error("Deve especificar 'email' e 'password'!");
   }
 
-  try {
+  // try {
     let user = await loginService(body);
 
     const {
@@ -38,19 +39,20 @@ const login = async (req, res, next) => {
         // ...user._doc,
         token: generateToken(user._id),
     });
-  } catch (error) {
-    res.status(error?.status || 500);
-    throw new Error(error.message);
-  }
-};
+  // } catch (error) {
+  //   res.status(error?.status || 500);
+  //   throw new Error(error.message);
+  //   // next(error)
+  // }
+});
 
 
 //@desc
 //@route
 //@access
-const getMe = async (req, res)=>{
+const getMe = asyncHandler (async (req, res)=>{
   res.status(200).json(req.user);
-}
+})
 
 
 
@@ -59,13 +61,13 @@ const getMe = async (req, res)=>{
 //@desc
 //@route
 //@access
-const getUsers = async (req, res) => {
+const getUsers = asyncHandler (async (req, res) => {
   const {
     query: { role },
     user,
   } = req;
 
-  try {
+  // try {
     let users;
     if (role) {
       users = await getUsersByRoleService(role);
@@ -82,16 +84,16 @@ const getUsers = async (req, res) => {
       status: "OK",
       data: users,
     });
-  } catch (error) {
-    res.status(error?.status || 500);
-    throw new Error(error.message);
-  }
-};
+  // } catch (error) {
+  //   res.status(error?.status || 500);
+  //   throw new Error(error.message);
+  // }
+});
 
 //@desc
 //@route
 //@access
-const addUser = async (req, res) => {
+const addUser = asyncHandler (async (req, res) => {
   const { body } = req;
   if (!body.fullname || !body.email || !body.password || !body.role) {
     res.status(400);
@@ -100,7 +102,7 @@ const addUser = async (req, res) => {
     );
   }
 
-  try {
+  // try {
     let savedUser = await addUserService(body);
 
     const {
@@ -112,16 +114,17 @@ const addUser = async (req, res) => {
         fullname, address, email, role, _id, createdAt,
         token: generateToken(savedUser._id),
     });
-  } catch (error) {
-    res.status(error?.status || 500);
-    throw new Error(error.message);
-  }
-};
+  // } catch (error) {
+  //   res.status(error?.status || 500);
+  //   throw new Error(error.message);
+  //   // next(error)
+  // }
+});
 
 //@desc
 //@route
 //@access
-const getUserById = async (req, res) => {
+const getUserById = asyncHandler (async (req, res) => {
   const {
     params: { userId },
   } = req;
@@ -129,7 +132,7 @@ const getUserById = async (req, res) => {
     res.status(400);
     throw new Error("O parametro ':userId' nao pode ser vazio");
   }
-  try {
+  // try {
     let foundUser = await getUserByIdService(userId);
     if (!foundUser) {
       res.status(404);
@@ -139,16 +142,16 @@ const getUserById = async (req, res) => {
       status: "OK",
       data: foundUser,
     });
-  } catch (error) {
-    res.status(error?.status || 500);
-    throw new Error(error.message);
-  }
-};
+  // } catch (error) {
+  //   res.status(error?.status || 500);
+  //   throw new Error(error.message);
+  // }
+});
 
 //@desc
 //@route
 //@access
-const updateUser = async (req, res) => {
+const updateUser = asyncHandler (async (req, res) => {
   const {
     body,
     params: { userId },
@@ -159,7 +162,7 @@ const updateUser = async (req, res) => {
     throw new Error("O parametro ':userId' nao pode ser vazio");
   }
 
-  try {
+  // try {
     let updatedUser = await updateUserService(userId, body);
     if (!updatedUser) {
       res.status(404);
@@ -169,16 +172,16 @@ const updateUser = async (req, res) => {
       status: "OK",
       data: updatedUser,
     });
-  } catch (error) {
-    res.status(error?.status || 500);
-    throw new Error(error.message);
-  }
-};
+  // } catch (error) {
+  //   res.status(error?.status || 500);
+  //   throw new Error(error.message);
+  // }
+});
 
 //@desc
 //@route
 //@access
-const deleteUser = async (req, res) => {
+const deleteUser = asyncHandler (async (req, res) => {
   const {
     params: { userId },
   } = req;
@@ -188,13 +191,13 @@ const deleteUser = async (req, res) => {
     throw new Error("O parametro ':userId' nao pode ser vazio");
   }
 
-  try {
+  // try {
     let deletionResult = await deleteUserService(userId);
     res.status(204).json({ status: "OK", message: "Utilizador eliminado", data: deletionResult });
-  } catch (err) {
-    res.status(error?.status || 500);
-    throw new Error(error.message);
-  }
-};
+  // } catch (err) {
+  //   res.status(error?.status || 500);
+  //   throw new Error(error.message);
+  // }
+});
 
 export { login, addUser, getUserById, getUsers, updateUser, deleteUser };

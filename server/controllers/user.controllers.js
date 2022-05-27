@@ -44,6 +44,18 @@ const login = async (req, res, next) => {
   }
 };
 
+
+//@desc
+//@route
+//@access
+const getMe = async (req, res)=>{
+  res.status(200).json(req.user);
+}
+
+
+
+
+
 //@desc
 //@route
 //@access

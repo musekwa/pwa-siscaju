@@ -7,7 +7,7 @@ import {
   divisionRoutes,
   monitoringRoutes,
   errorHandler,
-}  from "./server/server.js";
+} from "./server/server.js";
 
 app.use(userRoutes);
 app.use(farmerRoutes);
@@ -15,7 +15,7 @@ app.use(farmlandRoutes);
 app.use(divisionRoutes);
 app.use(monitoringRoutes);
 
-app.use(errorHandler)
+app.use(errorHandler);
 
 app.get("/", (req, res) => {
   res.sendFile("index.html");

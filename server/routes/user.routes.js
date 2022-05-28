@@ -6,11 +6,14 @@ import {
   addUser,
   updateUser,
   deleteUser,
+  register,
 } from "../controllers/user.controllers.js";
 import { body } from 'express-validator'
 import { protect } from "../middleware/authMiddleware.js"
 
 router.route("/login").post(login);
+
+router.route("/register").post(register)
 
 router.route("/users").get(protect, getUsers).post(addUser);
 

@@ -3,15 +3,16 @@ import config from '../../config/config.js'
 
 const errorHandler = (error, req, res, next)=>{
 
-    res.header ("Content-Type", "application/json");
+    // res.header ("Content-Type", "application/json");
 
     const statusCode = res.statusCode ? res.statusCode : 500;
 
     res.status(statusCode);
-    res.json({
-        message: error.message,
-        stack: config.env === 'production' ? null : error.stack,
-    })
+    // res.json({
+    //     message: error.message,
+    //     stack: config.env === 'production' ? null : error.stack,
+    // })
+    res.send(error.message)
     next(error)
 }
 

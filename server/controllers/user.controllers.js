@@ -1,3 +1,5 @@
+import User from "../models/user.model.js";
+import mongoose from "mongoose";
 import {
   loginService,
   getUsersService,
@@ -9,81 +11,91 @@ import {
 } from "../services/user.services.js";
 import _ from "lodash";
 import expressValidator from "express-validator";
-import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 import { generateToken } from "../middleware/authMiddleware.js";
 const { body, validationResult } = expressValidator;
-import asyncHandler from 'express-async-handler'
+import asyncHandler from "express-async-handler";
 
+//@desc login
+//@route
+//@access
+const login = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  let user = await User.findOne({ email });
+  if (user && (await bcrypt.compare(password, user.password))) {
+
+  return res.status(201).json({
+    fullname: user.fullname,
+    address: user.address,
+    email: user.email,
+    role: user.role,
+    _id: user._id,
+    createdAt: user.createdAt,
+    token: generateToken(user._id),
+  });
+}
+else {
+  res.status(400);
+  throw new Error("Credenciais invalidas")
+}
+});
 
 
 //@desc login
 //@route
 //@access
-const login = asyncHandler (async (req, res) => {
-  const { body } = req;
+const register = asyncHandler(async (req, res) => {
+  const user = new User(req.body);
 
-  if (!body.email || !body.password) {
-    res.status(400);
-    throw new Error("Deve especificar 'email' e 'password'!");
-  }
+  let savedUser = await user.save();
+ 
+  return res.status(201).json({
+    fullname: savedUser.fullname,
+    address: savedUser.address,
+    email: savedUser.email,
+    role: savedUser.role,
+    _id: savedUser._id,
+    createdAt: savedUser.createdAt,
+    token: generateToken(savedUser._id),
+  });
 
-  // try {
-    let user = await loginService(body);
-
-    const {
-      fullname, address, email, role, _id, createdAt
-    } = user
-
-    return res.status(201).json({
-        fullname, address, email, role, _id, createdAt,
-        // ...user._doc,
-        token: generateToken(user._id),
-    });
-  // } catch (error) {
-  //   res.status(error?.status || 500);
-  //   throw new Error(error.message);
-  //   // next(error)
-  // }
 });
 
 
 //@desc
 //@route
 //@access
-const getMe = asyncHandler (async (req, res)=>{
+const getMe = asyncHandler(async (req, res) => {
   res.status(200).json(req.user);
-})
-
-
-
-
+});
 
 //@desc
 //@route
 //@access
-const getUsers = asyncHandler (async (req, res) => {
+const getUsers = asyncHandler(async (req, res) => {
   const {
     query: { role },
     user,
   } = req;
 
   // try {
-    let users;
-    if (role) {
-      users = await getUsersByRoleService(role);
-    } else {
-      users = await getUsersService();
-    }
+  let users;
+  if (role) {
+    users = await getUsersByRoleService(role);
+  } else {
+    users = await getUsersService();
+  }
 
-    if (!users) {
-      res.status(404);
-      throw new Error("Utilizadores nao encontrados");
-    }
-    
-    return res.status(200).json({
-      status: "OK",
-      data: users,
-    });
+  if (!users) {
+    res.status(404);
+    throw new Error("Utilizadores nao encontrados");
+  }
+
+  return res.status(200).json({
+    status: "OK",
+    data: users,
+  });
   // } catch (error) {
   //   res.status(error?.status || 500);
   //   throw new Error(error.message);
@@ -93,7 +105,7 @@ const getUsers = asyncHandler (async (req, res) => {
 //@desc
 //@route
 //@access
-const addUser = asyncHandler (async (req, res) => {
+const addUser = asyncHandler(async (req, res) => {
   const { body } = req;
   if (!body.fullname || !body.email || !body.password || !body.role) {
     res.status(400);
@@ -103,17 +115,20 @@ const addUser = asyncHandler (async (req, res) => {
   }
 
   // try {
-    let savedUser = await addUserService(body);
+  let savedUser = await addUserService(body);
 
-    const {
-      fullname, address, email, role, _id, createdAt
-    } = savedUser;
+  const { fullname, address, email, role, _id, createdAt } = savedUser;
 
-    return res.status(201).json({
-        // ...savedUser._doc,
-        fullname, address, email, role, _id, createdAt,
-        token: generateToken(savedUser._id),
-    });
+  return res.status(201).json({
+    // ...savedUser._doc,
+    fullname,
+    address,
+    email,
+    role,
+    _id,
+    createdAt,
+    token: generateToken(savedUser._id),
+  });
   // } catch (error) {
   //   res.status(error?.status || 500);
   //   throw new Error(error.message);
@@ -124,7 +139,7 @@ const addUser = asyncHandler (async (req, res) => {
 //@desc
 //@route
 //@access
-const getUserById = asyncHandler (async (req, res) => {
+const getUserById = asyncHandler(async (req, res) => {
   const {
     params: { userId },
   } = req;
@@ -133,15 +148,15 @@ const getUserById = asyncHandler (async (req, res) => {
     throw new Error("O parametro ':userId' nao pode ser vazio");
   }
   // try {
-    let foundUser = await getUserByIdService(userId);
-    if (!foundUser) {
-      res.status(404);
-      throw new Error("Utilizador nao encontrado");
-    }
-    res.status(200).json({
-      status: "OK",
-      data: foundUser,
-    });
+  let foundUser = await getUserByIdService(userId);
+  if (!foundUser) {
+    res.status(404);
+    throw new Error("Utilizador nao encontrado");
+  }
+  res.status(200).json({
+    status: "OK",
+    data: foundUser,
+  });
   // } catch (error) {
   //   res.status(error?.status || 500);
   //   throw new Error(error.message);
@@ -151,7 +166,7 @@ const getUserById = asyncHandler (async (req, res) => {
 //@desc
 //@route
 //@access
-const updateUser = asyncHandler (async (req, res) => {
+const updateUser = asyncHandler(async (req, res) => {
   const {
     body,
     params: { userId },
@@ -163,15 +178,15 @@ const updateUser = asyncHandler (async (req, res) => {
   }
 
   // try {
-    let updatedUser = await updateUserService(userId, body);
-    if (!updatedUser) {
-      res.status(404);
-      throw new Error("Utilizador nao encontrado");
-    }
-    res.status(200).json({
-      status: "OK",
-      data: updatedUser,
-    });
+  let updatedUser = await updateUserService(userId, body);
+  if (!updatedUser) {
+    res.status(404);
+    throw new Error("Utilizador nao encontrado");
+  }
+  res.status(200).json({
+    status: "OK",
+    data: updatedUser,
+  });
   // } catch (error) {
   //   res.status(error?.status || 500);
   //   throw new Error(error.message);
@@ -181,7 +196,7 @@ const updateUser = asyncHandler (async (req, res) => {
 //@desc
 //@route
 //@access
-const deleteUser = asyncHandler (async (req, res) => {
+const deleteUser = asyncHandler(async (req, res) => {
   const {
     params: { userId },
   } = req;
@@ -192,12 +207,16 @@ const deleteUser = asyncHandler (async (req, res) => {
   }
 
   // try {
-    let deletionResult = await deleteUserService(userId);
-    res.status(204).json({ status: "OK", message: "Utilizador eliminado", data: deletionResult });
+  let deletionResult = await deleteUserService(userId);
+  res.status(204).json({
+    status: "OK",
+    message: "Utilizador eliminado",
+    data: deletionResult,
+  });
   // } catch (err) {
   //   res.status(error?.status || 500);
   //   throw new Error(error.message);
   // }
 });
 
-export { login, addUser, getUserById, getUsers, updateUser, deleteUser };
+export { login, register, addUser, getUserById, getUsers, updateUser, deleteUser };

@@ -1,30 +1,26 @@
 import User from "../models/user.model.js";
 import mongoose from "mongoose";
 // import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 
 const ObjectId = mongoose.Types.ObjectId;
 
 const loginService = async (body)=>{
   const { email, password } = body;
 
-  try {
-    let user = await User.authenticate(email, password)
-    if (!user){
-      throw {
-        status: 404,
-        message: 'Utilizador nao exisite!',
-      }
-   }
-    return user;
-  } catch (error) {
-    throw {
-      status: 500, message: error?.message || error
+    let user = await User.findOne({ email });
+    if (!user) {
+      throw new Error("Utilizador nao exisite!");
     }
-  }
+    let result = await bcrypt.compare(password, user.password);
+    if (!result) {
+      throw new Error("Password nao corresponde!");
+    }   
+    return user;
 }
 
 const getUsersService = async () => {
-  try {
+  // try {
     let users = await User.find({});
     if (!users) {
       throw {
@@ -33,12 +29,12 @@ const getUsersService = async () => {
       }
     }
     return users;
-  } catch (error) {
-      throw {
-          status: 500,
-          message: error?.message || error
-      }
-  }
+  // } catch (error) {
+  //     throw {
+  //         status: 500,
+  //         message: error?.message || error
+  //     }
+  // }
 };
 
 const getUsersByRoleService = async (role)=>{

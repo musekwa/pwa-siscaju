@@ -7,32 +7,33 @@ import {
   getMonitoringByVariabilityService,
   getMonitoringByVariablityAndYearService,
 } from "../services/monitoring.services.js";
+import asyncHandler from "express-async-handler";
 
 const ObjectId = mongoose.Types.ObjectId;
 
 //@desc 
 //@route 
 //@access
-const addMonitoringByVariability = async (req, res) => {
+const addMonitoringByVariability = asyncHandler (async (req, res) => {
   const { body, query, user, } = req;
 
   if (!query.divisionId || !query.variable) {
     res.status(400);
     throw new Error("Indique 'divisionId' e 'variable'!");
   }
-  try {
+  // try {
     let savedInspection = await inspectDivision(user.id, query, body);
     return res.status(201).json({ status: "OK", data: savedInspection });
-  } catch (error) {
-    res.status(error?.status || 500);
-    throw new Error(error.message);
-  }
-};
+  // } catch (error) {
+  //   res.status(error?.status || 500);
+  //   throw new Error(error.message);
+  // }
+});
 
 //@desc 
 //@route 
 //@access
-const getMonitorings = async (req, res) => {
+const getMonitorings = asyncHandler (async (req, res) => {
   const {
     query: { divisionId, variable, year },
   } = req;
@@ -42,7 +43,7 @@ const getMonitorings = async (req, res) => {
     throw new Error("Deve especificar 'divisionId'!");
   }
 
-  try {
+  // try {
     let monitoring;
     if (divisionId && !variable && !year) {
       monitoring = await getMonitoringService(divisionId); // ok
@@ -62,11 +63,11 @@ const getMonitorings = async (req, res) => {
     }
 
     return res.status(200).json({ status: "OK", data: monitoring });
-  } catch (error) {
-    res.status(error?.status || 500);
-    throw new Error(error.message);
-  }
-};
+  // } catch (error) {
+  //   res.status(error?.status || 500);
+  //   throw new Error(error.message);
+  // }
+});
 
 export {
   addMonitoringByVariability,

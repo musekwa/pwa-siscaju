@@ -6,16 +6,16 @@ import {
   updateFarmerService,
   deleteFarmerService,
 } from "../services/farmer.services.js";
-import _ from "lodash";
+import asyncHandler from 'express-async-handler'
 
 //@desc
 //@route
 //@access
-const getFarmers = async (req, res) => {
+const getFarmers = asyncHandler (async (req, res) => {
   const { user } = req;
   let farmers;
 
-  try {
+  // try {
     switch (user.role) {
       case "Extensionista":
         farmers = await getFarmerByDistrictService(user.role);
@@ -39,17 +39,17 @@ const getFarmers = async (req, res) => {
       status: "OK",
       data: farmers,
     });
-  } catch (error) {
-    res.status(error?.status || 500);
-    throw new Error(error.message);
-  }
-};
+  // } catch (error) {
+  //   res.status(error?.status || 500);
+  //   throw new Error(error.message);
+  // }
+});
 
 //@desc
 //@route
 //@access
 // Duplicates must not be allowed
-const addFarmer = async (req, res) => {
+const addFarmer = asyncHandler (async (req, res) => {
   const { body, user } = req;
   if (!body.fullname || !body.birthDate || !body.birthPlace) {
     res.status(400);
@@ -65,22 +65,22 @@ const addFarmer = async (req, res) => {
   // console.log('user id:', user.id)
   // console.log("user _id:", user._id);
 
-  try {
+  // try {
     let savedFarmer = await addFarmerService(user.id, body);
     return res.status(201).json({
       status: "OK",
       data: savedFarmer,
     });
-  } catch (error) {
-    res.status(error?.status || 500);
-    throw new Error(error.message);
-  }
-};
+  // } catch (error) {
+  //   res.status(error?.status || 500);
+  //   throw new Error(error.message);
+  // }
+});
 
 //@desc
 //@route
 //@access
-const getFarmerById = async (req, res) => {
+const getFarmerById = asyncHandler (async (req, res) => {
   const {
     params: { farmerId },
   } = req;
@@ -92,7 +92,7 @@ const getFarmerById = async (req, res) => {
     res.status(400);
     throw new Error("O parametro ':farmerId' nao pode ser vazio");
   }
-  try {
+  // try {
     const foundFarmer = await getFarmerByIdService(farmerId);
     if (!foundFarmer) {
       res.status(404);
@@ -102,16 +102,16 @@ const getFarmerById = async (req, res) => {
       status: "OK",
       data: foundFarmer,
     });
-  } catch (error) {
-    res.status(error?.status || 500);
-    throw new Error(error.message);
-  }
-};
+  // } catch (error) {
+  //   res.status(error?.status || 500);
+  //   throw new Error(error.message);
+  // }
+});
 
 //@desc
 //@route
 //@access
-const updateFarmer = async (req, res) => {
+const updateFarmer = asyncHandler (async (req, res) => {
   const {
     body,
     params: { farmerId },
@@ -121,7 +121,7 @@ const updateFarmer = async (req, res) => {
     throw new Error("O parametro ':farmerId' nao pode ser vazio");
   }
 
-  try {
+  // try {
     let updatedFarmer = await updateFarmerService(farmerId, body);
     if (!updatedFarmer) {
       res.status(404);
@@ -131,16 +131,16 @@ const updateFarmer = async (req, res) => {
       status: "OK",
       data: updatedFarmer,
     });
-  } catch (error) {
-    res.status(error?.status || 500);
-    throw new Error(error.message);
-  }
-};
+  // } catch (error) {
+  //   res.status(error?.status || 500);
+  //   throw new Error(error.message);
+  // }
+});
 
 //@desc
 //@route
 //@access
-const deleteFarmer = async (req, res) => {
+const deleteFarmer = asyncHandler (async (req, res) => {
   const {
     params: { farmerId },
   } = req;
@@ -148,13 +148,13 @@ const deleteFarmer = async (req, res) => {
     res.status(400);
     throw new Error("O parametro ':farmerId' nao pode ser vazio");
   }
-  try {
+  // try {
     let deletionResult = await deleteFarmerService(farmerId);
     return res.status(204).send(deletionResult);
-  } catch (error) {
-    res.status(error?.status || 500);
-    throw new Error(error.message);
-  }
-};
+  // } catch (error) {
+  //   res.status(error?.status || 500);
+  //   throw new Error(error.message);
+  // }
+});
 
 export { addFarmer, getFarmerById, getFarmers, updateFarmer, deleteFarmer };

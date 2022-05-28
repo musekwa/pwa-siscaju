@@ -11,13 +11,14 @@ import {
   updateFarmlandService,
   deleteFarmlandService,
 } from "../services/farmland.services.js";
+import asyncHandler from 'express-async-handler'
 
 const ObjectId = mongoose.Types.ObjectId;
 
 //@desc
 //@route
 //@access
-const addFarmland = async (req, res) => {
+const addFarmland = asyncHandler (async (req, res) => {
   const {
     body,
     query: { farmerId },
@@ -30,28 +31,28 @@ const addFarmland = async (req, res) => {
       "Deve indicar ou o parametro 'farmerId' ou dados do pomar!"
     );
   }
-  try {
+  // try {
     let savedFarmland = await addFarmlandService(user.id, farmerId, body);
     return res.status(201).json({
       status: "OK",
       data: { farmer: savedFarmland.farmer, farmland: savedFarmland.farmland },
     });
-  } catch (error) {
-    res.status(error?.status || 500);
-    throw new Error(error.message);
-  }
-};
+  // } catch (error) {
+  //   res.status(error?.status || 500);
+  //   throw new Error(error.message);
+  // }
+});
 
 //@desc
 //@route
 //@access
-const getFarmlands = async (req, res) => {
+const getFarmlands = asyncHandler (async (req, res) => {
   const {
     query: { farmerId, farmlandId },
     user,
   } = req;
 
-  try {
+  // try {
     let farmlands;
     if (!farmerId && !farmlandId) {
       // get all registered farmlands
@@ -71,32 +72,32 @@ const getFarmlands = async (req, res) => {
       status: "OK",
       data: farmlands,
     });
-  } catch (error) {
-    res.status(error?.status || 500);
-    throw new Error(error.message);
-  }
-};
+  // } catch (error) {
+  //   res.status(error?.status || 500);
+  //   throw new Error(error.message);
+  // }
+});
 
 //@desc
 //@route
 //@access
-const getFarmlandById = async (req, res) => {
+const getFarmlandById = asyncHandler (async (req, res) => {
   const {
     params: { farmlandId },
   } = req;
-  try {
+  // try {
     let foundFarmland = await getFarmlandByFarmlandIdService(farmlandId);
     return res.status(200).json({ status: "OK", data: foundFarmland });
-  } catch (error) {
-    res.status(error?.status || 500);
-    throw new Error(error.message);
-  }
-};
+  // } catch (error) {
+  //   res.status(error?.status || 500);
+  //   throw new Error(error.message);
+  // }
+});
 
 //@desc
 //@route
 //@access
-const updateFarmland = async (req, res) => {
+const updateFarmland = asyncHandler (async (req, res) => {
   const {
     body,
     params: { farmlandId },
@@ -107,7 +108,7 @@ const updateFarmland = async (req, res) => {
     throw new Error("Deve especificar 'farmerId' e 'farmlandId'");
   }
 
-  try {
+  // try {
     let updatedFarmland = await updateFarmlandService(farmlandId, body);
     if (!updatedFarmland) {
       res.status(404);
@@ -115,16 +116,16 @@ const updateFarmland = async (req, res) => {
     }
 
     return res.status(200).json({ status: "OK", data: updatedFarmland });
-  } catch (error) {
-    res.status(error?.status || 500);
-    throw new Error(error.message);
-  }
-};
+  // } catch (error) {
+  //   res.status(error?.status || 500);
+  //   throw new Error(error.message);
+  // }
+});
 
 //@desc
 //@route
 //@access
-const deleteFarmland = async (req, res) => {
+const deleteFarmland = asyncHandler (async (req, res) => {
   const {
     params: { farmlandId },
     query: { farmerId },
@@ -135,16 +136,16 @@ const deleteFarmland = async (req, res) => {
     throw new Error("Deve especificar 'farmerId' e 'farmlandId'");
   }
 
-  try {
+  // try {
     let deletionResult = await deleteFarmlandService(farmerId, farmlandId);
     return res
       .status(204)
       .json({ status: "OK", message: "Pomar eliminado", data: deletionResult });
-  } catch (error) {
-    res.status(error?.status || 500);
-    throw new Error(error.message);
-  }
-};
+  // } catch (error) {
+  //   res.status(error?.status || 500);
+  //   throw new Error(error.message);
+  // }
+});
 
 export {
   addFarmland,

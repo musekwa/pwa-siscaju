@@ -9,6 +9,8 @@ import {
   updateDivisionService,
   deleteDivisionService,
 } from "../services/division.services.js";
+import asyncHandler from "express-async-handler";
+
 
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -16,13 +18,13 @@ const ObjectId = mongoose.Types.ObjectId;
 //@route 
 //@access
 // duplicates not being allowed
-const addDivision = async (req, res) => {
+const addDivision = asyncHandler (async (req, res) => {
   const {
     body,
     params: { farmlandId },
   } = req;
 
-  try {
+  // try {
     if (!farmlandId) {
       res.status(400);
       throw new Error("Deve especificar o 'farmlandId' do pomar");
@@ -33,21 +35,21 @@ const addDivision = async (req, res) => {
       status: "OK",
       data: farmland,
     });
-  } catch (error) {
-    res.status(error?.status || 500);
-    throw new Error(error.message);
-  }
-};
+  // } catch (error) {
+  //   res.status(error?.status || 500);
+  //   throw new Error(error.message);
+  // }
+});
 
 //@desc 
 //@route 
 //@access
-const getDivisions = async (req, res) => {
+const getDivisions = asyncHandler (async (req, res) => {
   const {
     params: { farmlandId },
     query: { divisionId },
   } = req;
-  try {
+  // try {
     let foundDivisions;
     if (farmlandId && !divisionId) {
       foundDivisions = await getDivisionsService(farmlandId);
@@ -58,11 +60,11 @@ const getDivisions = async (req, res) => {
       status: "OK",
       data: foundDivisions,
     });
-  } catch (error) {
-    res.status(error?.status || 500);
-    throw new Error(error.message);
-  }
-};
+  // } catch (error) {
+  //   res.status(error?.status || 500);
+  //   throw new Error(error.message);
+  // }
+});
 
 //@desc 
 //@route 

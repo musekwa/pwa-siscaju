@@ -143,19 +143,19 @@ usersSchema.pre("save", function(next){
 })
 
 // authenticating user 
-usersSchema.statics.authenticate = async function(email, password){
-  let user = await User.findOne({ email }) 
-  if (!user){
-    return ;
-  }
-  let result = await bcrypt.compare(password, user.password)
-  if (result){
-    return user;
-  }
-  else{
-    return ;
-  }
-}
+// usersSchema.statics.authenticate = async function(email, password){
+//   let user = await User.findOne({ email }) 
+//   if (!user){
+//     return ;
+//   }
+//   let result = await bcrypt.compare(password, user.password)
+//   if (result){
+//     return user;
+//   }
+//   else{
+//     return ;
+//   }
+// }
 
 // validating the fullname
 usersSchema.path("fullname").validate(function (value) {

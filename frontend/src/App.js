@@ -29,7 +29,6 @@ function App() {
     <ThemeProvider theme={outerTheme}>
       <Router>
         <div className="container">
-          <Header />
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/login" element={<Login />} />
